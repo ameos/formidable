@@ -1,0 +1,34 @@
+<!-- ###DEFAULT_ADVSEARCHFORM### begin-->
+	{fields} {childs} {searchmanagement}
+<!-- ###DEFAULT_ADVSEARCHFORM### end-->
+
+<!-- ###DEFAULT_ADVSEARCHFORM_FIELDS### begin-->
+	
+	<div class="searchrows">
+	<!-- ###ROWS### begin-->
+		<!-- ###ROW1### begin-->
+			<div class="searchrowodd">
+				{subject} {type} {value} {add} {remove} {subquery}
+				<div style="margin-left:25px;">{childrows}</div>
+			</div>
+		<!-- ###ROW1### end-->
+		
+		<!-- ###ROW2### begin-->
+			<div class="searchroweven">
+				{subject} {type} {value} {add} {remove} {subquery}
+				<div style="margin-left:25px;">{childrows}</div>
+			</div>
+		<!-- ###ROW2### end-->		
+	<!-- ###ROWS### end-->
+	</div>
+	
+<!-- ###DEFAULT_ADVSEARCHFORM_FIELDS### end-->
+
+<!-- ###DEFAULT_ADVSEARCHFORM_BOX### begin-->
+	<h3>{LLL:EXT:ameos_formidable/api/base/rdt_advsearchform/res/locallang/locallang.xml:searchmanagement.load}</h3>
+	{loadsearchname} {loadsearchbtn} {removesearchbtn}
+	<hr />
+	<h3>{LLL:EXT:ameos_formidable/api/base/rdt_advsearchform/res/locallang/locallang.xml:searchmanagement.save}</h3>
+	{globalsearchbtn}<br />
+	{savesearchname} {savesearchbtn}
+<!-- ###DEFAULT_ADVSEARCHFORM_BOX### end-->

@@ -1,0 +1,29 @@
+<T3DataStructure>
+	<meta type="array">
+		<langChildren type="integer">0</langChildren>
+		<langDisable type="integer">1</langDisable>
+	</meta>
+	<ROOT>
+		<type>array</type>
+		<el>
+			<tspath>
+				<TCEforms>
+					<label>Abs TS path to Formidable cObj (ex: lib.mytsconfig.myxml)</label>
+					<config>
+						<type>input</type>
+						<size>60</size>
+					</config>
+				</TCEforms>
+			</tspath>
+			<xmlpath>
+				<TCEforms>
+					<label>OR: XML path to Formidable cObj (ex: /fileadmin/formidable.xml)</label>
+					<config>
+						<type>input</type>
+						<size>60</size>
+					</config>
+				</TCEforms>
+			</xmlpath>
+		</el>
+	</ROOT>
+</T3DataStructure>

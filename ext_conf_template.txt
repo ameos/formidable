@@ -1,0 +1,5 @@
+# cat=basic; type=int+; label=Garbage collector, Probability of GC execution (1 chance out of X)
+gc_probability = 200
+
+# cat=basic; type=int+; label=Garbage collector, Max age of JS files, in seconds
+gc_jsmaxage = 604800

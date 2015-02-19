@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>database</type>
+		<description>Language labels for renderlet:PLUPLOAD</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="browselabel"><![CDATA[Browse for files]]></label>
+			<label index="uploadlabel"><![CDATA[Upload selected files]]></label>
+		</languageKey>
+		<languageKey index="fr" type="array">
+			<label index="browselabel"><![CDATA[Parcourir les fichiers]]></label>
+			<label index="uploadlabel"><![CDATA[Envoyer les fichiers sélectionnés]]></label>
+		</languageKey>
+	</data>
+</T3locallang>

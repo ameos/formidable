@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>database</type>
+		<description>Language labels for renderlet:ADVSEARCHFORM</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="type.approximately"><![CDATA[Contains]]></label>
+			<label index="type.notapproximately"><![CDATA[Not contains]]></label>
+			<label index="type.exactly"><![CDATA[Is]]></label>
+			<label index="type.notexactly"><![CDATA[Isn't]]></label>
+			<label index="type.dateexactly"><![CDATA[Is]]></label>
+			<label index="type.datenotexactly"><![CDATA[Isn't]]></label>
+			<label index="type.dateinferior"><![CDATA[Inferior]]></label>
+			<label index="type.datesuperior"><![CDATA[Superior]]></label>
+			
+			<label index="logicbox.or"><![CDATA[Some of the following conditions are true]]></label>
+			<label index="logicbox.and"><![CDATA[All following conditions are true]]></label>
+			
+			<label index="currentcolumn">Current columns</label>
+			
+			<label index="searchmanagement.managesearchbtn.label">Manage search</label>
+			<label index="searchmanagement.title">Manage search</label>
+			<label index="searchmanagement.save">Save search</label>
+			<label index="searchmanagement.load">Load search</label>
+			<label index="searchmanagement.savesearchname.label">Search name</label>
+			<label index="searchmanagement.savesearchbtn.label">Save search</label>
+			<label index='searchmanagement.globalsearchbtn.label'>Save this search for all users.</label>
+			<label index="searchmanagement.loadsearchname.label">Search</label>
+			<label index="searchmanagement.loadsearchbtn.label">Load search</label>
+			<label index="searchmanagement.removesearchbtn.label">Remove search</label>
+		</languageKey>
+		<languageKey index="fr" type="array">
+			<label index="type.approximately"><![CDATA[Contient]]></label>
+			<label index="type.notapproximately"><![CDATA[Ne contient pas]]></label>
+			<label index="type.exactly"><![CDATA[Est]]></label>
+			<label index="type.notexactly"><![CDATA[N'est pas]]></label>
+			<label index="type.dateexactly"><![CDATA[Est]]></label>
+			<label index="type.datenotexactly"><![CDATA[N'est pas]]></label>
+			<label index="type.dateinferior"><![CDATA[Inférieur]]></label>
+			<label index="type.datesuperior"><![CDATA[Supérieur]]></label>
+			
+			<label index="logicbox.or"><![CDATA[Certaines des conditions suivantes sont vraies]]></label>
+			<label index="logicbox.and"><![CDATA[Toutes les conditions suivantes sont vraies]]></label>
+			
+			<label index="currentcolumn">Colonnes actuelles</label>
+			
+			<label index="searchmanagement.managesearchbtn.label">Gérer les recherches</label>
+			<label index="searchmanagement.title">Gérer les recherches</label>
+			<label index="searchmanagement.save">Enregistrer la recherche</label>
+			<label index="searchmanagement.load">Charger une recherche</label>
+			<label index="searchmanagement.savesearchname.label">Nom de la recherche</label>
+			<label index="searchmanagement.savesearchbtn.label">Enregistrer la recherche</label>
+			<label index="searchmanagement.loadsearchname.label">Recherche</label>
+			<label index="searchmanagement.loadsearchbtn.label">Charger la recherche</label>
+			<label index="searchmanagement.removesearchbtn.label">Supprimer la recherche</label>
+		</languageKey>
+		<languageKey index="de" type="array">
+		</languageKey>
+	</data>
+</T3locallang>
