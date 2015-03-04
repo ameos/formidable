@@ -402,11 +402,6 @@ class tx_rdtlistbox extends formidable_mainrenderlet {
 		if($aItems == FALSE) {
 			$aItems = $this->_getItems();
 		}
-		if(is_array($aItems) && count($aItems) > 0) {
-			# only one item
-			$aFirst = array_shift($aItems);
-			return $this->_substituteConstants($aFirst["value"]);
-		}
 
 		return "";
 	}
