@@ -445,10 +445,13 @@
 				"additionalinputparams" => $this->_getAddInputParams($sId),
 				"value" => $mValue,
 				"value." => array(
-					"nl2br" => nl2br($mValue),
 					"humanreadable" => $mHuman,
 				)
 			);
+			if(is_string($mValue)) {
+				$mHtml['value.']['nl2br'] = nl2br($mValue);
+			}
+
 			
 			if(($sListHeader = $this->_navConf("/listheader")) !== FALSE) {
 				$mHtml["listheader"] = $this->oForm->_getLLLabel($sListHeader);
@@ -1129,7 +1132,15 @@ TOOLTIP;
 		}
 
 		function isValueEmpty() {
-			return trim($this->getValue()) === "";
+			$value = $this->getValue();
+			if(is_string($value)) {
+				return trim($value) === "";
+			} elseif(is_array($value)) {
+				return empty($value);
+			} else {
+				return empty($value);
+			}
+
 		}
 
 		function isDataEmpty() {

@@ -389,6 +389,7 @@ class tx_rdtlistbox extends formidable_mainrenderlet {
 
 	function getValue($aItems = FALSE) {
 		$sSetValue = parent::getValue();
+
 		if(is_array($sSetValue)) {
 			$sSetValue = array_diff($sSetValue, array(''));
 		}

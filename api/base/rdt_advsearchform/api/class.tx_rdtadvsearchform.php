@@ -1509,8 +1509,8 @@ INITSCRIPT;
 			
 			$sWhereClause = $aConfig['key']['name'] . '=' . $aConfig['key']['value'];
 		}		
-		
-		if($aConfig['key']['value'] !== 'new') {
+
+		if(isset($aConfig['key']['value']) && $aConfig['key']['value'] !== 'new') {
 			// update
 			$aCurrent = array_shift($GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
 				$aConfig['field'],

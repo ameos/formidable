@@ -199,9 +199,10 @@
 
 		function defaultFalseMixed($sPath) {
 			if(($mMixed = $this->_navConf($sPath)) !== FALSE) {
-				
-				if(strtoupper($mMixed) !== "TRUE" && strtoupper($mMixed) !== "FALSE") {
-					return $mMixed;
+				if(is_string($mMixed)) {
+					if(strtoupper($mMixed) !== "TRUE" && strtoupper($mMixed) !== "FALSE") {
+						return $mMixed;
+					}
 				}
 
 				return $this->isTrue($sPath);

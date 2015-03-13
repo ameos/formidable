@@ -7355,6 +7355,9 @@ MAYDAYPAGE;
 	function _arrayToRdtItems($aData, $sCaptionMap = FALSE, $sValueMap = FALSE) {
 
 		$aItems = array();
+		if(empty($aData) || !is_array($aData)) {
+			$aData = array();
+		}
 		reset($aData);
 
 		if($sCaptionMap !== FALSE && $sValueMap !== FALSE) {
@@ -9211,10 +9214,6 @@ MAYDAYPAGE;
 	}
 
 	function div_rteToHtml($sRteHtml, $sTable = "", $sColumn = "") {
-
-		require_once(PATH_t3lib . "class.t3lib_rteapi.php");
-		require_once(PATH_t3lib . "class.t3lib_befunc.php");
-
 		$pageTSConfig = $GLOBALS['TSFE']->getPagesTSconfig();
 
 		$aConfig = $pageTSConfig['RTE.']['default.']['FE.'];
@@ -9228,7 +9227,7 @@ MAYDAYPAGE;
 		);
 
 
-		return t3lib_rteapi::transformContent(
+		return \TYPO3\CMS\Backend\Rte\AbstractRte::transformContent(
 			'rte',
 			$sRteHtml,
 			$sTable,
