@@ -212,8 +212,9 @@ class tx_rdtadvsearchform extends formidable_mainrenderlet {
 	}
 	
 	function _renderSearchform_displaySearchmanagement(&$aHtmlBag) {
+		$sCompiled = '';
 		foreach($this->aRdtSearchmangement as $aRdt) {
-			$sCompiled .= $aRdt['__compiled'];
+			$sCompiled = $aRdt['__compiled'];
 		}
 		$aHtmlBag['searchmanagement'] = $sCompiled;
 		$aHtmlBag['searchmanagement.'] = $this->aRdtSearchmangement;
@@ -269,9 +270,8 @@ class tx_rdtadvsearchform extends formidable_mainrenderlet {
 		}
 
 		if($aTemplate["path"]{0} === 'T' && substr($aTemplate["path"], 0, 3) === 'TS:') {
-			$sTsPointer = $sString;
 			if(($aTemplate["path"] = $this->oForm->getTS($aTemplate["path"], TRUE)) === AMEOSFORMIDABLE_TS_FAILED) {	
-				$this->oForm->mayday("The typoscript pointer <b>" . $sTsPointer . "</b> 
+				$this->oForm->mayday("The typoscript pointer <b>" . $aTemplate["path"] . "</b> 
 					evaluation has failed, as the pointed property does not exists within the current Typoscript template");
 			}
 		}
@@ -813,7 +813,7 @@ class tx_rdtadvsearchform extends formidable_mainrenderlet {
 			}
 			
 			$aChilds['type'] 		= $this->_makeTypeField($sIndex, $oRow, $aData['type'], $sTypes);
-			$aChilds['value']		= $this->_makeDateField($sIndex, $oRow, $aData['value'], $sFormat);
+			$aChilds['value']		= $this->_makeDateField($sIndex, $oRow, $aData['value'], $this->sDateFormat);
 			$this->sDateFormat = '%Y/%m/%d';
 		} else {
 			$aChilds['type'] 		= $this->_makeTypeField($sIndex, $oRow, $aData['type'], $sTypes);
@@ -1214,26 +1214,26 @@ INITSCRIPT;
 	function sqlClause($sType, $sValue, $sTable) {
 		switch($sType) {
 			case self::FORMIDABLE_ADVSEARCHFORM_EXACTLY:
-				$sQuery.= ' = \'' . $GLOBALS["TYPO3_DB"]->quoteStr($sValue, $sTable) . '\''; 
+				$sQuery = ' = \'' . $GLOBALS["TYPO3_DB"]->quoteStr($sValue, $sTable) . '\''; 
 				break;
 			
 			case self::FORMIDABLE_ADVSEARCHFORM_APPROXIMATELY:
-				$sQuery.= ' LIKE \'%' . $GLOBALS["TYPO3_DB"]->quoteStr($sValue, $sTable) . '%\''; 			
+				$sQuery = ' LIKE \'%' . $GLOBALS["TYPO3_DB"]->quoteStr($sValue, $sTable) . '%\''; 			
 				break;
 			
 			case self::FORMIDABLE_ADVSEARCHFORM_NOTEXACTLY:
-				$sQuery.= ' <> \'' . $GLOBALS["TYPO3_DB"]->quoteStr($sValue, $sTable) . '\'';		
+				$sQuery = ' <> \'' . $GLOBALS["TYPO3_DB"]->quoteStr($sValue, $sTable) . '\'';		
 				break;
 			
 			case self::FORMIDABLE_ADVSEARCHFORM_NOTAPPROXIMATELY:
-				$sQuery.= ' NOT LIKE \'%' . $GLOBALS["TYPO3_DB"]->quoteStr($sValue, $sTable) . '%\'';			
+				$sQuery = ' NOT LIKE \'%' . $GLOBALS["TYPO3_DB"]->quoteStr($sValue, $sTable) . '%\'';			
 				break;
 				
 			case self::FORMIDABLE_ADVSEARCHFORM_DATEEXACTLY:
 				if(trim($sValue) == '') {
 					return ' LIKE \'%%\'';
 				}
-				$sQuery.= ' BETWEEN ' . 
+				$sQuery = ' BETWEEN ' . 
 					$this->formatDate($sValue, 'begin') . ' AND ' . 
 					$this->formatDate($sValue, 'end');
 				break;
@@ -1242,7 +1242,7 @@ INITSCRIPT;
 				if(trim($sValue) == '') {
 					return ' LIKE \'%%\'';
 				}
-				$sQuery.= ' NOT BETWEEN ' . 
+				$sQuery = ' NOT BETWEEN ' . 
 					$this->formatDate($sValue, 'begin') . ' AND ' . 
 					$this->formatDate($sValue, 'end');
 				break;
@@ -1251,14 +1251,14 @@ INITSCRIPT;
 				if(trim($sValue) == '') {
 					return ' LIKE \'%%\'';
 				}
-				$sQuery.= ' > ' . $this->formatDate($sValue, 'end');
+				$sQuery = ' > ' . $this->formatDate($sValue, 'end');
 				break;
 					
 			case self::FORMIDABLE_ADVSEARCHFORM_DATEINF:
 				if(trim($sValue) == '') {
 					return ' LIKE \'%%\'';
 				}
-				$sQuery.= ' < ' . $this->formatDate($sValue, 'begin');
+				$sQuery = ' < ' . $this->formatDate($sValue, 'begin');
 				break;
 		}
 		
@@ -1278,7 +1278,7 @@ INITSCRIPT;
 		$aQuery = array();
 		if($oListerRdt !== FALSE) {
 			foreach($oListerRdt->getSearchableColumns() as $sColumn) {
-				if(!in_array($sColumn, $aExcludeColumn)) {
+			//	if(!in_array($sColumn, $aExcludeColumn)) {
 					switch($sType) {
 						case self::FORMIDABLE_ADVSEARCHFORM_APPROXIMATELY:
 							$aQuery[] = '(' . 
@@ -1296,7 +1296,7 @@ INITSCRIPT;
 								'%\')';
 							break;
 					}
-				}
+			//	}
 			}
 		}
 		
@@ -1565,7 +1565,7 @@ INITSCRIPT;
 				'renderlet' => array(
 					'type' => 'TEXT', 
 					'name' => 'savesearchname',
-					'label' => $this->oForm->getLLLabel($sPrefixLLL . '.savesearchname.label')
+					'label' => $this->oForm->getLLLabel($this->sPrefixLLL . '.savesearchname.label')
 				)
 			),
 			'class' => 'formidable_managesearchbox'
