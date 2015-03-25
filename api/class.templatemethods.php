@@ -429,8 +429,10 @@ class formidable_templatemethods extends formidable_mainscriptingmethods {
 	}
 	
 	function method_codeBehind($mData, $aParams) {
-		if(array_key_exists($aParams[0], $this->oForm->aCodeBehinds["php"])) {
-			return $this->oForm->aCodeBehinds["php"][$aParams[0]]["object"];
+		if(is_array($this->oForm->aCodeBehinds["php"])) {
+			if(array_key_exists($aParams[0], $this->oForm->aCodeBehinds["php"])) {
+				return $this->oForm->aCodeBehinds["php"][$aParams[0]]["object"];
+			}
 		}
 
 		return AMEOSFORMIDABLE_LEXER_BREAKED;

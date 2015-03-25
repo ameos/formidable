@@ -270,8 +270,8 @@ class tx_rdtadvsearchform extends formidable_mainrenderlet {
 		}
 
 		if($aTemplate["path"]{0} === 'T' && substr($aTemplate["path"], 0, 3) === 'TS:') {
-			if(($aTemplate["path"] = $this->oForm->getTS($aTemplate["path"], TRUE)) === AMEOSFORMIDABLE_TS_FAILED) {	
-				$this->oForm->mayday("The typoscript pointer <b>" . $aTemplate["path"] . "</b> 
+			if(($aTemplate["path"] = $this->oForm->getTS($aTemplate["path"], TRUE)) === AMEOSFORMIDABLE_TS_FAILED) {
+				$this->oForm->mayday("The typoscript pointer <b>" . $aTemplate["path"] . "</b>
 					evaluation has failed, as the pointed property does not exists within the current Typoscript template");
 			}
 		}
@@ -327,7 +327,27 @@ class tx_rdtadvsearchform extends formidable_mainrenderlet {
 		$this->_initDataSource();
 		$this->_initRows();
 		$this->_initDescendants();
-				
+
+		if($this->shouldUpdateCriterias()) {
+			$values = $this->getValue();
+			foreach($values as $key => $value) {
+				if(strpos($key, 'searchrow') === FALSE && $key != 'managesearchbox') {
+					$this->oForm->rdt($key)->setValue($value);
+					$aData = &$GLOBALS["_SESSION"]["ameos_formidable"]["applicationdata"]["rdt_lister"][$this->getSearchHash()][$this->getAbsName()];
+					$aData['childs'][$key] = $value;
+				}
+			}
+		} else {
+			$aData = &$GLOBALS["_SESSION"]["ameos_formidable"]["applicationdata"]["rdt_lister"][$this->getSearchHash()][$this->getAbsName()];
+			if(isset($aData['childs']) && is_array($aData['childs'])) {
+				foreach($aData['childs'] as $key => $value) {
+					if($this->oForm->rdt($key)) {
+						$this->oForm->rdt($key)->setValue($value);
+					}
+				}
+			}			
+		}
+
 		if($this->searchManagementIsEnable()) {
 			$this->_initSearchmanagement();
 		}
@@ -440,7 +460,7 @@ class tx_rdtadvsearchform extends formidable_mainrenderlet {
 			if(!$this->shouldUpdateCriterias()) {
 				$aAppData["rdt_lister"][$this->getSearchHash()][$this->getAbsName()]["loadedsearch"] = false;
 				$aCriterias =& $aAppData["rdt_lister"][$this->getSearchHash()][$this->getAbsName()]["criterias"];
-
+			
 				if(empty($aCriterias)) {
 					$aRow = array();
 					$sIndex = $this->getNewindex();
@@ -454,8 +474,9 @@ class tx_rdtadvsearchform extends formidable_mainrenderlet {
 						$this->aSearchRows[$sIndex] = $this->makeRow($sIndex, $aRow);
 					}
 				}
-				
+
 			} else {
+				
 				$aPost = t3lib_div::_POST($this->oForm->formid);
 				$aSearformPost = $aPost;
 				$aSplitName = explode('.', $this->getAbsName());
@@ -679,6 +700,23 @@ class tx_rdtadvsearchform extends formidable_mainrenderlet {
 		$this->oForm->aORenderlets[$oListValue->getAbsName()] =& $oListValue;
 		return $oListValue;
 	}
+
+	function _makeChecksingleValueField($sIndex, $oParent, $sValue, $sField) {
+		$aTextValue = array(
+			'type' => 'CHECKSINGLE',
+			'name' => 'value',
+			'data' => array(
+				'value' => $sValue,
+			),
+			'class' => $this->getClass('value', $oParent)
+		);
+		
+		$sXPath = $oParent->sXPath . 'childs/value/';
+		$oTextValue = $this->oForm->_makeRenderlet($aTextValue, $sXPath, TRUE, $oParent, FALSE, FALSE);
+
+		$this->oForm->aORenderlets[$oTextValue->getAbsName()] =& $oTextValue;
+		return $oTextValue;
+	}
 	
 	function _makeDateField($sIndex, $oParent, $sValue) {
 		$aDateValue = array(
@@ -804,8 +842,12 @@ class tx_rdtadvsearchform extends formidable_mainrenderlet {
 			}
 
 		} elseif($sMode === 'listbox') {
-			$aChilds['type'] 		= $this->_makeTypeField($sIndex, $oRow, $aData['type'], $sTypes);
+			$aChilds['type'] 	= $this->_makeTypeField($sIndex, $oRow, $aData['type'], $sTypes);
 			$aChilds['value'] 	= $this->_makeListValueField($sIndex, $oRow, $aData['value'], $aData['subject']);
+	
+		} elseif($sMode === 'checksingle') {
+		//	$aChilds['type'] 	= $this->_makeTypeField($sIndex, $oRow, $aData['type'], $sTypes);
+			$aChilds['value'] 	= $this->_makeChecksingleValueField($sIndex, $oRow, $aData['value'], $aData['subject']);
 	
 		} elseif($sMode === 'date') {
 			if(isset($this->aSearchFields[$aData['subject']]['format'])) {
@@ -1214,26 +1256,26 @@ INITSCRIPT;
 	function sqlClause($sType, $sValue, $sTable) {
 		switch($sType) {
 			case self::FORMIDABLE_ADVSEARCHFORM_EXACTLY:
-				$sQuery = ' = \'' . $GLOBALS["TYPO3_DB"]->quoteStr($sValue, $sTable) . '\''; 
+				$sQuery = ' = \'' . $GLOBALS["TYPO3_DB"]->quoteStr($sValue, $sTable) . '\'';
 				break;
 			
 			case self::FORMIDABLE_ADVSEARCHFORM_APPROXIMATELY:
-				$sQuery = ' LIKE \'%' . $GLOBALS["TYPO3_DB"]->quoteStr($sValue, $sTable) . '%\''; 			
+				$sQuery = ' LIKE \'%' . $GLOBALS["TYPO3_DB"]->quoteStr($sValue, $sTable) . '%\'';
 				break;
 			
 			case self::FORMIDABLE_ADVSEARCHFORM_NOTEXACTLY:
-				$sQuery = ' <> \'' . $GLOBALS["TYPO3_DB"]->quoteStr($sValue, $sTable) . '\'';		
+				$sQuery = ' <> \'' . $GLOBALS["TYPO3_DB"]->quoteStr($sValue, $sTable) . '\'';
 				break;
 			
 			case self::FORMIDABLE_ADVSEARCHFORM_NOTAPPROXIMATELY:
-				$sQuery = ' NOT LIKE \'%' . $GLOBALS["TYPO3_DB"]->quoteStr($sValue, $sTable) . '%\'';			
+				$sQuery = ' NOT LIKE \'%' . $GLOBALS["TYPO3_DB"]->quoteStr($sValue, $sTable) . '%\'';
 				break;
 				
 			case self::FORMIDABLE_ADVSEARCHFORM_DATEEXACTLY:
 				if(trim($sValue) == '') {
 					return ' LIKE \'%%\'';
 				}
-				$sQuery = ' BETWEEN ' . 
+				$sQuery = ' BETWEEN ' .
 					$this->formatDate($sValue, 'begin') . ' AND ' . 
 					$this->formatDate($sValue, 'end');
 				break;
@@ -1242,7 +1284,7 @@ INITSCRIPT;
 				if(trim($sValue) == '') {
 					return ' LIKE \'%%\'';
 				}
-				$sQuery = ' NOT BETWEEN ' . 
+				$sQuery = ' NOT BETWEEN ' .
 					$this->formatDate($sValue, 'begin') . ' AND ' . 
 					$this->formatDate($sValue, 'end');
 				break;
@@ -1278,7 +1320,7 @@ INITSCRIPT;
 		$aQuery = array();
 		if($oListerRdt !== FALSE) {
 			foreach($oListerRdt->getSearchableColumns() as $sColumn) {
-			//	if(!in_array($sColumn, $aExcludeColumn)) {
+				//if(!in_array($sColumn, $aExcludeColumn)) {
 					switch($sType) {
 						case self::FORMIDABLE_ADVSEARCHFORM_APPROXIMATELY:
 							$aQuery[] = '(' . 
@@ -1296,7 +1338,7 @@ INITSCRIPT;
 								'%\')';
 							break;
 					}
-			//	}
+				//}
 			}
 		}
 		
@@ -1326,6 +1368,7 @@ INITSCRIPT;
 		
 		$aAppData =& $GLOBALS["_SESSION"]["ameos_formidable"]["applicationdata"];
 		$aAppData["rdt_lister"][$this->getSearchHash()][$this->getAbsName()]["criterias"] = array();
+		$aAppData["rdt_lister"][$this->getSearchHash()][$this->getAbsName()]["childs"] = array();
 		$aAppData["rdt_lister"][$this->getSearchHash()][$this->getAbsName()]["loadedsearch"] = true;
 		$aAppData["rdt_lister"][$this->getSearchHash()][$this->getAbsName()]["infos"]["lastsearchtime"] = time();
 		
@@ -1509,7 +1552,7 @@ INITSCRIPT;
 			
 			$sWhereClause = $aConfig['key']['name'] . '=' . $aConfig['key']['value'];
 		}		
-
+		
 		if(isset($aConfig['key']['value']) && $aConfig['key']['value'] !== 'new') {
 			// update
 			$aCurrent = array_shift($GLOBALS['TYPO3_DB']->exec_SELECTgetRows(

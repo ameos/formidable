@@ -9,6 +9,7 @@ class tx_rdtupload extends formidable_mainrenderlet {
 
 	var $aUploaded = FALSE;	// array if file has just been uploaded
 	var $bUseDam = null;	// will be set to TRUE or FALSE, depending on /dam/use=boolean, default FALSE
+	var $bUseFal = null;	// will be set to TRUE or FALSE, depending on /fal/use=boolean, default FALSE
 	var $bManageFile = FALSE;
 	
 	var $mTargetFile = AMEOSFORMIDABLE_NOTSET;
@@ -210,109 +211,134 @@ class tx_rdtupload extends formidable_mainrenderlet {
 
 		$aData = $this->getValue();
 		if(is_array($aData) && $aData["error"] == 0) {
-			// a file has just been uploaded
-
-			$oFileTool = t3lib_div::makeInstance("t3lib_basicFileFunctions");
-
-			if(($sTargetFile = $this->getTargetFile()) !== FALSE) {
-				$sTargetDir = t3lib_div::dirname($sTargetFile);
-				$sName = basename($sTargetFile);
-				if($this->defaultFalse("/data/cleanfilename") || $this->defaultFalse("/cleanfilename")) {
-					$sName = $this->strtolower(
-						$this->cleanFileName($sName)
-					);
+			if($this->useFal()) {
+				if(($storageIdentifier = $this->_navConf("/fal/storage")) !== FALSE) {
+					if(tx_ameosformidable::isRunneable($storageIdentifier)) {
+						$storageIdentifier = $this->callRunneable($storageIdentifier);
+					}
 				}
-				$sTarget = $sTargetDir . '/' . $sName;
-			} else {
-				$sTargetDir = $this->getTargetDir();
-				#debug($sTargetDir, "le bon targetdir");
 
-				$sName = basename($aData["name"]);
+				$storageRepository = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Resource\\StorageRepository');
+				$storage = $storageRepository->findByUid($storageIdentifier);
+				$storageConfiguration = $storage->getConfiguration();
+
+				$folderPath = str_replace(PATH_site . $storageConfiguration['basePath'], '/', $this->getTargetDir());
+				$folder = $storage->getFolder($folderPath);
+
+				$finalName = basename($aData["name"]);
 				if($this->defaultTrue("/data/cleanfilename") && $this->defaultTrue("/cleanfilename")) {
-					$sName = $this->strtolower(
-						$this->cleanFileName($sName)
+					$finalName = $this->strtolower(
+						$this->cleanFileName($finalName)
 					);
 				}
 
-				$sTarget = $sTargetDir . $sName;
-				if(!file_exists($sTargetDir)) {
-					if($this->defaultFalse("/data/targetdir/createifneeded") === TRUE) {
-						// the target does not exist, we have to create it
-						$this->oForm->div_mkdir_deep_abs($sTargetDir);
+				$newFile = $folder->addFile($aData["tmp_name"], $finalName, 'changeName');
+				$this->setValue($newFile->getName());
+
+			} else {			
+				// a file has just been uploaded
+				$oFileTool = t3lib_div::makeInstance("t3lib_basicFileFunctions");
+
+				if(($sTargetFile = $this->getTargetFile()) !== FALSE) {
+					$sTargetDir = t3lib_div::dirname($sTargetFile);
+					$sName = basename($sTargetFile);
+					if($this->defaultFalse("/data/cleanfilename") || $this->defaultFalse("/cleanfilename")) {
+						$sName = $this->strtolower(
+							$this->cleanFileName($sName)
+						);
 					}
-				}
+					$sTarget = $sTargetDir . '/' . $sName;
+				} else {
+					$sTargetDir = $this->getTargetDir();
+					#debug($sTargetDir, "le bon targetdir");
 
-				if(!$this->oForm->defaultFalse("/data/overwrite", $this->aElement)) {
-					// rename the file if same name already exists
-
-					$sExt = ((strpos($sName,'.') === FALSE) ? '' : '.' . substr(strrchr($sName, "."), 1));
-
-					for($i=1; file_exists($sTarget); $i++) {
-						$sTarget = $sTargetDir . substr($sName, 0, strlen($sName)-strlen($sExt)).'['.$i.']'.$sExt;
-					}
-
-					$sName = basename($sTarget);
-				}
-			}
-
-			#debug($sTarget, "target");
-			#debug(realpath("."));
-			if(move_uploaded_file($aData["tmp_name"], $sTarget)) {
-
-				// success
-				$this->aUploaded = array(
-					"dir" => $sTargetDir,
-					"name" => $sName,
-					"path" => $sTarget,
-					"infos" => $aData,
-				);
-				#debug($this->aUploaded, "this->aUploaded");
-
-				$sCurFile = $sName;
-				if($this->useDam()) {
-					$iUid = $this->damify(
-						$this->getServerPath($sName)
-					);
-
-					$sCurFile = $iUid;
-				}
-
-
-
-				//debug($sCurFile, "curfile");
-
-				if($this->isMultiple()) {
-					// csv string of file names
-
-					if($this->oForm->oDataHandler->_edition() === FALSE || $this->_renderOnly()) {
-						//$aPost = $this->oForm->oDataHandler->_P();
-						$sCurrent = $aData["backup"];
-					} else {
-						$sCurrent = trim($this->oForm->oDataHandler->_getStoredData($this->_getName()));
+					$sName = basename($aData["name"]);
+					if($this->defaultTrue("/data/cleanfilename") && $this->defaultTrue("/cleanfilename")) {
+						$sName = $this->strtolower(
+							$this->cleanFileName($sName)
+						);
 					}
 
-					if($sCurrent !== "") {
+					$sTarget = $sTargetDir . $sName;
+					if(!file_exists($sTargetDir)) {
+						if($this->defaultFalse("/data/targetdir/createifneeded") === TRUE) {
+							// the target does not exist, we have to create it
+							$this->oForm->div_mkdir_deep_abs($sTargetDir);
+						}
+					}
 
-						$aCurrent = t3lib_div::trimExplode(",", $sCurrent);
-						if(!in_array($sCurFile, $aCurrent)) {
-							$aCurrent[] = $sCurFile;
+					if(!$this->oForm->defaultFalse("/data/overwrite", $this->aElement)) {
+						// rename the file if same name already exists
+
+						$sExt = ((strpos($sName,'.') === FALSE) ? '' : '.' . substr(strrchr($sName, "."), 1));
+
+						for($i=1; file_exists($sTarget); $i++) {
+							$sTarget = $sTargetDir . substr($sName, 0, strlen($sName)-strlen($sExt)).'['.$i.']'.$sExt;
 						}
 
-						// adding filename to list
-						$this->setValue(implode(",", $aCurrent));
+						$sName = basename($sTarget);
+					}
+				}
+
+				#debug($sTarget, "target");
+				#debug(realpath("."));
+				if(move_uploaded_file($aData["tmp_name"], $sTarget)) {
+
+					// success
+					$this->aUploaded = array(
+						"dir" => $sTargetDir,
+						"name" => $sName,
+						"path" => $sTarget,
+						"infos" => $aData,
+					);
+					#debug($this->aUploaded, "this->aUploaded");
+
+					$sCurFile = $sName;
+					if($this->useDam()) {
+						$iUid = $this->damify(
+							$this->getServerPath($sName)
+						);
+
+						$sCurFile = $iUid;
+					}
+
+
+
+					//debug($sCurFile, "curfile");
+
+					if($this->isMultiple()) {
+						// csv string of file names
+
+						if($this->oForm->oDataHandler->_edition() === FALSE || $this->_renderOnly()) {
+							//$aPost = $this->oForm->oDataHandler->_P();
+							$sCurrent = $aData["backup"];
+						} else {
+							$sCurrent = trim($this->oForm->oDataHandler->_getStoredData($this->_getName()));
+						}
+
+						if($sCurrent !== "") {
+
+							$aCurrent = t3lib_div::trimExplode(",", $sCurrent);
+							if(!in_array($sCurFile, $aCurrent)) {
+								$aCurrent[] = $sCurFile;
+							}
+
+							// adding filename to list
+							$this->setValue(implode(",", $aCurrent));
+						} else {
+
+							// first value in multiple list
+							$this->setValue($sCurFile);
+						}
 					} else {
 
-						// first value in multiple list
+						// replacing value in list
 						$this->setValue($sCurFile);
 					}
-				} else {
-
-					// replacing value in list
-					$this->setValue($sCurFile);
 				}
-			}
 
-			$this->handleDam();
+				$this->handleDam();
+			}
 
 		} else {
 
@@ -439,6 +465,19 @@ class tx_rdtupload extends formidable_mainrenderlet {
 		}
 
 		return $this->bUseDam;
+	}
+
+	function useFal() {
+
+		if(is_null($this->bUseFal)) {
+			if($this->oForm->defaultFalse("/fal/use", $this->aElement) === TRUE) {
+				$this->bUseFal = TRUE;				
+			} else {
+				$this->bUseFal = FALSE;
+			}
+		}
+
+		return $this->bUseFal;
 	}
 
 	function handleDam() {
@@ -702,9 +741,11 @@ class tx_rdtupload extends formidable_mainrenderlet {
 */
 
 	public function formatValue($mValue) {
-		if(is_numeric($mValue)) {
-			$oMedia = tx_dam::media_getByUid($mValue);
-			return $oMedia->meta['file_name'];
+		if(t3lib_extmgm::isLoaded("dam")) {
+			if(is_numeric($mValue)) {
+				$oMedia = tx_dam::media_getByUid($mValue);
+				return $oMedia->meta['file_name'];
+			}
 		}
 
 		return $mValue;

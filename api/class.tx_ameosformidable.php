@@ -3512,7 +3512,7 @@ SANDBOXCLASS;
 					}
 
 				} elseif(array_key_exists($sPath, $curZone) || array_key_exists($sPath . ".", $curZone)) {
-					if($sNextPath !== FALSE && array_key_exists($sPath . ".", $curZone)) {
+					if($sNextPath !== FALSE && array_key_exists($sPath . ".", $curZone) && is_array($curZone[$sPath . "."])) {
 						if(array_key_exists($sNextPath, $curZone[$sPath . "."]) || array_key_exists($sNextPath . ".", $curZone[$sPath . "."])) {
 							$curZone = $curZone[$sPath . "."];
 						} else {
