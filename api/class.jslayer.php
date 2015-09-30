@@ -125,7 +125,7 @@
 
 		function minified() {
 			return (
-				tx_ameosformidable::__getEnvExecMode() !== "BE" && 
+				$this->oForm->__getEnvExecMode() !== "BE" && 
 				intval($this->oForm->conf["minify."]["enabled"]) === 1 &&
 				(
 					file_exists(

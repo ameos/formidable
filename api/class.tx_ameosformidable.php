@@ -7245,7 +7245,7 @@ MAYDAYPAGE;
 		}		
 
 		$oMail = t3lib_div::makeInstance('t3lib_mail_Message');
-		$oMail->setSubject($sSubject)->setTo($aAdresse)->setBody($sMessage, 'text/html');
+		$oMail->setSubject($sSubject)->setBody($sMessage, 'text/html');
 
 		if(trim($sFromAd) !== '') {
 			if(trim($sFromName) === '') {
@@ -7293,8 +7293,11 @@ MAYDAYPAGE;
 				}
 			}
 		}
-			
-		$oMail->send();
+		
+		foreach ($aAdresse as $to) {
+			$oMail->setTo($to);
+			$oMail->send();
+		}
 	}
 
 	/**
