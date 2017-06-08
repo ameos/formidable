@@ -23,7 +23,7 @@ class tx_vadb extends formidable_mainvalidator {
 			*
 			***********************************************************************/
 
-			if($sKey{0} === "u" && t3lib_div::isFirstPartOfStr($sKey, "unique")) {
+			if($sKey{0} === "u" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "unique")) {
 				// field value has to be unique in the database
 				// checking this
 

@@ -65,7 +65,7 @@
 		function _render($conf) {
 			
 			require_once(PATH_formidable . "api/class.tx_ameosformidable.php");
-			$this->oForm = t3lib_div::makeInstance("tx_ameosformidable");
+			$this->oForm = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("tx_ameosformidable");
 			$this->oForm->initFromTs(
 				$this,
 				$conf

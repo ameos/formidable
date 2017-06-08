@@ -66,7 +66,7 @@ class tx_actstepper extends formidable_mainactionlet {
 				"AMEOSFORMIDABLE_STEP_HASH"	=> ($this->oForm->_getSafeLock($sStep)),
 			);
 
-			$aGet = t3lib_div::_GET();
+			$aGet = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET();
 			if(array_key_exists("id", $aGet)) {
 				unset($aGet["id"]);
 			}
@@ -74,7 +74,7 @@ class tx_actstepper extends formidable_mainactionlet {
 			$sUrl = $this->oForm->_oParent->pi_getPageLink(
 				$GLOBALS["TSFE"]->id,
 				"_self",
-				t3lib_div::array_merge_recursive_overrule(
+				\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
 					$aGet,
 					$aParams
 				)
@@ -109,7 +109,7 @@ class tx_actstepper extends formidable_mainactionlet {
 				"AMEOSFORMIDABLE_STEP_HASH" => $this->oForm->_getSafeLock($iStepToGo . $sUid)
 			);
 
-			$sUrl = t3lib_div::getIndpEnv("TYPO3_REQUEST_URL");
+			$sUrl = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_REQUEST_URL");
 
 			if(!is_null($sUrl)) {
 				header("Location: " . $sUrl);

@@ -130,7 +130,7 @@ class formidable_json
     *                                   bubble up with an error, so all return values
     *                                   from encode() should be checked with isError()
     */
-    function formidable_json($use = 0)
+    function __construct($use = 0)
     {
         $this->use = $use;
     }
@@ -254,7 +254,7 @@ class formidable_json
                 // STRINGS ARE EXPECTED TO BE IN ASCII OR UTF-8 FORMAT
 				//$ascii = addslashes(utf8_encode($var));
 
-				if(t3lib_div::isFirstPartOfStr($var, "function(")) {
+				if(\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($var, "function(")) {
 					return $var;
 				}
 

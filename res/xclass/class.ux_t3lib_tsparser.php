@@ -1,6 +1,6 @@
 <?php
 
-class ux_t3lib_TSparser extends t3lib_TSparser {
+class ux_TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser extends TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser {
 	var $multiLineHeredoc=FALSE;	// Internally set, when multiline value is accumulated
 
 	/**
@@ -102,20 +102,20 @@ class ux_t3lib_TSparser extends t3lib_TSparser {
 											$newValue = (strcmp('',$currentValue) ? $currentValue.',' : '') . trim($tsFuncArg);
 										break;
 										case 'removeFromList':
-											$existingElements = t3lib_div::trimExplode(',',$currentValue);
-											$removeElements = t3lib_div::trimExplode(',',$tsFuncArg);
+											$existingElements = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',',$currentValue);
+											$removeElements = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',',$tsFuncArg);
 											if (count($removeElements))	{
 												$newValue = implode(',', array_diff($existingElements, $removeElements));
 											}
 										break;
 										default:
-											if (isset($TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_tsparser.php']['preParseFunc'][$tsFunc]))	{
-												$hookMethod = $TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_tsparser.php']['preParseFunc'][$tsFunc];
+											if (isset($TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser.php']['preParseFunc'][$tsFunc]))	{
+												$hookMethod = $TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser.php']['preParseFunc'][$tsFunc];
 												$params = array('currentValue'=>$currentValue, 'functionArgument'=>$tsFuncArg);
 												$fakeThis = FALSE;
-												$newValue = t3lib_div::callUserFunction($hookMethod,$params,$fakeThis);
+												$newValue = \TYPO3\CMS\Core\Utility\GeneralUtility::callUserFunction($hookMethod,$params,$fakeThis);
 											} else {
-												t3lib_div::sysLog('Missing function definition for '.$tsFunc.' on TypoScript line '.$lineP,'Core',2);
+												\TYPO3\CMS\Core\Utility\GeneralUtility::sysLog('Missing function definition for '.$tsFunc.' on TypoScript line '.$lineP,'Core',2);
 											}
 									}
 
@@ -215,7 +215,7 @@ class ux_t3lib_TSparser extends t3lib_TSparser {
 }
 
 
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/ameos_formidable/res/xclass/class.ux_t3lib_tsparser.php'])	{
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/ameos_formidable/res/xclass/class.ux_t3lib_tsparser.php']);
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/ameos_formidable/res/xclass/class.ux_TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser.php'])	{
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/ameos_formidable/res/xclass/class.ux_TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser.php']);
 }
 ?>

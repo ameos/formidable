@@ -18,7 +18,7 @@
 			$aRes = array();
 		
 			if(array_key_exists("load", $conf)) {
-				$aLoad = t3lib_div::trimExplode(",", strtolower($conf["load"]));
+				$aLoad = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", strtolower($conf["load"]));
 			
 				reset($aLoad);
 				while(list($sKey,) = each($aLoad)) {

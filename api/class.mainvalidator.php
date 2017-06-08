@@ -24,7 +24,7 @@
 				*
 				***********************************************************************/
 
-				if($sKey{0} === "r" && t3lib_div::isFirstPartOfStr($sKey, "required")) {
+				if($sKey{0} === "r" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "required")) {
 					if($this->_isEmpty($oRdt, $mValue)) {
 						if(($mMessage = $this->_navConf("/" . $sKey . "/message")) !== FALSE && tx_ameosformidable::isRunneable($mMessage)) {
 							$mMessage = $oRdt->callRunneable($mMessage);
@@ -46,7 +46,7 @@
 				*
 				***********************************************************************/
 
-				if($sKey{0} === "a" && t3lib_div::isFirstPartOfStr($sKey, "authentified")) {
+				if($sKey{0} === "a" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "authentified")) {
 					if(!$this->_isAuthentified()) {
 						$message = $this->oForm->_getLLLabel($this->_navConf("/" . $sKey . "/message/"));
 						$this->oForm->_declareValidationError(
@@ -66,7 +66,7 @@
 				*
 				***********************************************************************/
 
-				if($sKey{0} === "m" && t3lib_div::isFirstPartOfStr($sKey, "maxsize")) {
+				if($sKey{0} === "m" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "maxsize")) {
 
 					$iMaxSize = intval($this->_navConf("/" . $sKey . "/value/"));
 
@@ -92,7 +92,7 @@
 				*
 				***********************************************************************/
 
-				if($sKey{0} === "m" && t3lib_div::isFirstPartOfStr($sKey, "minsize")) {
+				if($sKey{0} === "m" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "minsize")) {
 
 					$iMinSize = intval($this->_navConf("/" . $sKey . "/value/"));
 
@@ -118,7 +118,7 @@
 				*
 				***********************************************************************/
 
-				if($sKey{0} === "s" && t3lib_div::isFirstPartOfStr($sKey, "size")) {
+				if($sKey{0} === "s" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "size")) {
 
 					$iSize = intval($this->_navConf("/" . $sKey . "/value/"));
 
@@ -145,7 +145,7 @@
 				*
 				***********************************************************************/
 
-				if($sKey{0} === "s" && t3lib_div::isFirstPartOfStr($sKey, "sameas")) {
+				if($sKey{0} === "s" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "sameas")) {
 
 					$sameas = trim($this->_navConf("/" . $sKey . "/value/"));
 
@@ -175,7 +175,7 @@
 				*
 				***********************************************************************/
 
-				if($sKey{0} === "e" && t3lib_div::isFirstPartOfStr($sKey, "email")) {
+				if($sKey{0} === "e" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "email")) {
 					if(!$this->_isEmail($mValue)) {
 						$message = $this->oForm->_getLLLabel($this->_navConf("/" . $sKey . "/message/"));
 						$this->oForm->_declareValidationError(
@@ -199,7 +199,7 @@
 				*
 				***********************************************************************/
 
-				if($sKey{0} === "u" && t3lib_div::isFirstPartOfStr($sKey, "userobj")) {
+				if($sKey{0} === "u" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "userobj")) {
 					$this->oForm->mayday("[" . $oRdt->getName() . "] <b>/validator:STANDARD/userobj is deprecated.</b> Use /validator:STANDARD/custom instead.");
 				}
 
@@ -212,7 +212,7 @@
 				*
 				***********************************************************************/
 
-				if($sKey{0} === "u" && t3lib_div::isFirstPartOfStr($sKey, "unique")) {
+				if($sKey{0} === "u" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "unique")) {
 					// field value has to be unique in the database
 					// checking this
 
@@ -237,7 +237,7 @@
 				*
 				***********************************************************************/
 
-				if($sKey{0} === "c" && t3lib_div::isFirstPartOfStr($sKey, "custom")) {
+				if($sKey{0} === "c" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "custom")) {
 					$mCustom = $this->_navconf("/" . $sKey);
 					if(tx_ameosformidable::isRunneable($mCustom)) {
 						
@@ -305,7 +305,7 @@
 		}
 
 		function _isEmail($mValue) {
-			return trim($mValue) == "" || t3lib_div::validEmail($mValue);
+			return trim($mValue) == "" || \TYPO3\CMS\Core\Utility\GeneralUtility::validEmail($mValue);
 		}
 
 		function _isAuthentified() {

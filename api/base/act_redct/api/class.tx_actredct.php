@@ -24,7 +24,7 @@ class tx_actredct extends formidable_mainactionlet {
 					"parameter" => $mPage
 				));
 				
-				if(!t3lib_div::isFirstPartOfStr($sUrl, "http://") && trim($GLOBALS["TSFE"]->baseUrl) !== "") {
+				if(!\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sUrl, "http://") && trim($GLOBALS["TSFE"]->baseUrl) !== "") {
 					$sUrl = $this->oForm->_removeEndingSlash($GLOBALS["TSFE"]->baseUrl) . "/" . $sUrl;
 				}
 			} else {

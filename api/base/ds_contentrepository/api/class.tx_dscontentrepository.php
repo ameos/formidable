@@ -13,7 +13,7 @@ class tx_dscontentrepository extends formidable_maindatasource {
 	function _init(&$oForm, $aElement, $aObjectType, $sXPath, $sNamePrefix = FALSE) {
 		parent::_init($oForm, $aElement, $aObjectType, $sXPath, $sNamePrefix);
 		
-		if(!t3lib_extmgm::isLoaded("extbase")) {
+		if(!\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded("extbase")) {
 			$this->oForm->mayday("datasource:CONTENTREPOSITORY[name='" . $this->getName() . "'] The Content Repository API is <b>not loaded</b>, and should be (<b>EXT:extbase</b>).");
 		}
 
@@ -23,7 +23,7 @@ class tx_dscontentrepository extends formidable_maindatasource {
 	}
 
 	function loadContentRepositoryFramework() {
-		$sExtBasePath = t3lib_extmgm::extPath("extbase");
+		$sExtBasePath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath("extbase");
 		require_once($sExtBasePath . "Classes/Utility/Strings.php");
 		require_once($sExtBasePath . "Classes/Exception.php");
 		require_once($sExtBasePath . "Classes/Persistence/Session.php");
@@ -67,7 +67,7 @@ class tx_dscontentrepository extends formidable_maindatasource {
 				}
 			}
 
-			$this->oRepo = t3lib_div::makeInstance($sClassName);
+			$this->oRepo = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance($sClassName);
 		}
 	}
 
@@ -75,7 +75,7 @@ class tx_dscontentrepository extends formidable_maindatasource {
 		reset($this->aElement);
 		while(list($sElementName, ) = each($this->aElement)) {
 
-			if($sElementName{0} === "a" && t3lib_div::isFirstPartOfStr($sElementName, "aggregate")) {
+			if($sElementName{0} === "a" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sElementName, "aggregate")) {
 
 				if(($sClassFile = $this->_navConf("/" . $sElementName . "/classfile")) === FALSE) {
 					$this->oForm->mayday("datasource:CONTENTREPOSITORY[name='" . $this->getName() . "'] You have to provide <b>/aggregate/classFile</b>.");
@@ -110,7 +110,7 @@ class tx_dscontentrepository extends formidable_maindatasource {
 
 	function initDataSet($sKey) {
 		$sSignature = FALSE;
-		$oDataSet = t3lib_div::makeInstance("formidable_maindataset");
+		$oDataSet = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("formidable_maindataset");
 		
 		if($sKey === "new") {
 			// new record to create
@@ -147,7 +147,7 @@ class tx_dscontentrepository extends formidable_maindatasource {
 			$oObject->$sKey = $aData[$sKey];
 		}
 
-		$oSession = t3lib_div::makeInstance("TX_EXTBASE_Persistence_Session");
+		$oSession = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("TX_EXTBASE_Persistence_Session");
 		$oSession->registerAddedObject($oObject);
 		$oSession->commit();
 	}

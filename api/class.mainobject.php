@@ -24,7 +24,7 @@
 
 			$this->sExtPath = $aObjectType["PATH"];
 			$this->sExtRelPath = $aObjectType["RELPATH"];
-			$this->sExtWebPath = t3lib_div::getIndpEnv("TYPO3_SITE_URL") . $this->sExtRelPath;
+			$this->sExtWebPath = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_SITE_URL") . $this->sExtRelPath;
 
 			$this->sXPath = $sXPath;
 
@@ -215,7 +215,7 @@
 
 
 		// this has to be static !!!
-		function loaded(&$aParams) {
+		static function loaded(&$aParams) {
 		}
 
 		function cleanBeforeSession() {

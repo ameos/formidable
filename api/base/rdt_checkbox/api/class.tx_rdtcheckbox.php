@@ -134,7 +134,7 @@ class tx_rdtcheckbox extends formidable_mainrenderlet {
 	function _unFlatten($sData) {
 		
 		if(!$this->_emptyFormValue($sData)) {
-			return t3lib_div::trimExplode(",", $sData);
+			return \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $sData);
 		}
 
 		return array();
@@ -143,7 +143,7 @@ class tx_rdtcheckbox extends formidable_mainrenderlet {
 	function _getHumanReadableValue($data) {
 
 		if(!is_array($data)) {
-			$data = t3lib_div::trimExplode(",", $data);
+			$data = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $data);
 		}
 
 		$aLabels = array();
@@ -166,10 +166,10 @@ class tx_rdtcheckbox extends formidable_mainrenderlet {
 		return implode(", ", $aLabels);
 	}
 	
-	function _sqlSearchClause($sValues, $sFieldPrefix = "") {
+	function _sqlSearchClause($sValues, $sFieldPrefix = "", $sFieldName = '', $bRec = true) {
 
 		$aParts = array();
-		$aValues = t3lib_div::trimExplode(",", $sValues);
+		$aValues = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $sValues);
 		$sSql = '';
 		if(sizeof($aValues) > 0) {
 
@@ -193,7 +193,7 @@ class tx_rdtcheckbox extends formidable_mainrenderlet {
 						$sOnFields = $aConf["onfields"];
 					}
 
-					$aFields = t3lib_div::trimExplode(",", $sOnFields);
+					$aFields = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $sOnFields);
 					reset($aFields);
 				} else {
 					$aFields = array($this->_getName());

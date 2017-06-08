@@ -95,7 +95,7 @@ class tx_rdti18n extends formidable_mainrenderlet {
 							unset($aConf["onclick-default"]);
 						}
 
-						$aConf = t3lib_div::array_merge_recursive_overrule(
+						\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
 							$aConf,
 							$aCustomConf
 						);
@@ -200,7 +200,7 @@ EVENT;
 							unset($aConf["onclick-default"]);
 						}
 
-						$aConf = t3lib_div::array_merge_recursive_overrule(
+						\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
 							$aConf,
 							$aCustomConf
 						);
@@ -297,7 +297,7 @@ EVENT;
 		);
 
 		if(($aCustomConf = $this->_navConf("/stdbutton")) !== FALSE) {
-			$aConf = t3lib_div::array_merge_recursive_overrule(
+			\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
 				$aConf,
 				$aCustomConf
 			);

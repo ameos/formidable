@@ -22,7 +22,7 @@ class tx_rdtchooser extends formidable_mainrenderlet {
 			)
 		);
 
-		$sFuncName = "_formidableRdtChooser" . t3lib_div::shortMd5($this->oForm->formid . $this->_getName());
+		$sFuncName = "_formidableRdtChooser" . \TYPO3\CMS\Core\Utility\GeneralUtility::shortMd5($this->oForm->formid . $this->_getName());
 		$sElementId = $this->_getElementHtmlId();
 		
 		$sMode = $this->_navConf("/submitmode");
@@ -54,7 +54,6 @@ $sScript = <<<JAVASCRIPT
 
 JAVASCRIPT;
 
-		require_once(PATH_tslib . "class.tslib_pagegen.php");
 		$this->oForm->additionalHeaderData(
 			$this->oForm->inline2TempFile($sScript, 'js', "Chooser " . $sHtmlId . " stuff")
 		);

@@ -170,7 +170,7 @@ class tx_rdtticker extends formidable_mainrenderlet {
 				$sRowsHtml = implode("", $aRowsHtml);
 			}
 
-			$sHtml = t3lib_parsehtml::substituteSubpart(
+			$sHtml = \TYPO3\CMS\Core\Html\HtmlParser::substituteSubpart(
 				$sTemplate,
 				"###ROWS###",
 				$sRowsHtml,
@@ -213,13 +213,13 @@ class tx_rdtticker extends formidable_mainrenderlet {
 			$this->oForm->mayday("RENDERLET TICKER <b>" . $this->_getName() . "</b> requires /template/alternaterows to be properly set. Please check your XML configuration");
 		}
 
-		$aAltList = t3lib_div::trimExplode(",", $sAltList);
+		$aAltList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $sAltList);
 		if(sizeof($aAltList) > 0) {
-			$sRowsPart = t3lib_parsehtml::getSubpart($sTemplate, "###ROWS###");
+			$sRowsPart = \TYPO3\CMS\Core\Html\HtmlParser::getSubpart($sTemplate, "###ROWS###");
 
 			reset($aAltList);
 			while(list(, $sAltSubpart) = each($aAltList)) {
-				$aRowsTmpl[] = t3lib_parsehtml::getSubpart($sRowsPart, $sAltSubpart);
+				$aRowsTmpl[] = \TYPO3\CMS\Core\Html\HtmlParser::getSubpart($sRowsPart, $sAltSubpart);
 			}
 		}
 
@@ -230,7 +230,7 @@ class tx_rdtticker extends formidable_mainrenderlet {
 
 		if(($aTemplate = $this->_navConf("/template")) !== FALSE) {
 
-			$sPath = t3lib_div::getFileAbsFileName($this->oForm->_navConf("/path", $aTemplate));
+			$sPath = \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($this->oForm->_navConf("/path", $aTemplate));
 			if(!file_exists($sPath)) {
 				$this->oForm->mayday("renderlet:" . $this->_getType() . "[name=" . $this->getName() . "] - The given template file path (<b>'" . $sPath . "'</b>) doesn't exists.");
 			} elseif(is_dir($sPath)) {
@@ -243,8 +243,8 @@ class tx_rdtticker extends formidable_mainrenderlet {
 				$sSubpart = $this->getName();
 			}
 
-			$sHtml = t3lib_parsehtml::getSubpart(
-				t3lib_div::getUrl($sPath),
+			$sHtml = \TYPO3\CMS\Core\Html\HtmlParser::getSubpart(
+				\TYPO3\CMS\Core\Utility\GeneralUtility::getUrl($sPath),
 				$sSubpart
 			);
 

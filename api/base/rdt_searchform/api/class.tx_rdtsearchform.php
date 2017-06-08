@@ -19,8 +19,8 @@ class tx_rdtsearchform extends formidable_mainrenderlet {
 		"rdt_searchform_class" => "res/js/searchform.js",
 	);
 
-	function _init(&$oForm, $aElement, $aObjectType, $sXPath) {
-		parent::_init($oForm, $aElement, $aObjectType, $sXPath);
+	function _init(&$oForm, $aElement, $aObjectType, $sXPath, $sNamePrefix = false) {
+		parent::_init($oForm, $aElement, $aObjectType, $sXPath, $sNamePrefix);
 		$this->_initDescendants();	// early init (meaning before removing unprocessed rdts)
 	}
 
@@ -271,7 +271,7 @@ class tx_rdtsearchform extends formidable_mainrenderlet {
 
 				if($this->_getParamsFromGET()) {
 
-					$aGet = (t3lib_div::_GET($sFormId)) ? t3lib_div::_GET($sFormId) : array();
+					$aGet = (\TYPO3\CMS\Core\Utility\GeneralUtility::_GET($sFormId)) ? \TYPO3\CMS\Core\Utility\GeneralUtility::_GET($sFormId) : array();
 
 					reset($aGet);
 					while(list($sAbsName, ) = each($aGet)) {
@@ -394,7 +394,7 @@ class tx_rdtsearchform extends formidable_mainrenderlet {
 			}
 		} else {
 			if($this->_getParamsFromGET()) {
-				$aGet = (t3lib_div::_GET($this->oForm->formid)) ? t3lib_div::_GET($this->oForm->formid) : array();
+				$aGet = (\TYPO3\CMS\Core\Utility\GeneralUtility::_GET($this->oForm->formid)) ? \TYPO3\CMS\Core\Utility\GeneralUtility::_GET($this->oForm->formid) : array();
 				$aIntersect = array_intersect(array_keys($aGet), array_keys($this->oForm->aORenderlets));
 				return count($aIntersect) > 0;	// are there get params in url matching at least one criteria in the searchform ?
 			}

@@ -50,7 +50,7 @@ class tx_vapreg extends formidable_mainvalidator {
 			*
 			***********************************************************************/
 
-			if($sKey{0} === "p" && t3lib_div::isFirstPartOfStr($sKey, "pattern")) {
+			if($sKey{0} === "p" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "pattern")) {
 				$sPattern = $this->_navConf("/" . $sKey . "/value");
 
 				if(!$this->_isValid($sPattern)) {

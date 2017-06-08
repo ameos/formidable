@@ -23,8 +23,8 @@
 		var $sSubmittedValue = FALSE;
 
 
-		function _init(&$oForm, $aElement, $aObjectType, $sXPath) {
-			parent::_init($oForm, $aElement, $aObjectType, $sXPath);
+		function _init(&$oForm, $aElement, $aObjectType, $sXPath, $sNamePrefix = FALSE) {
+			parent::_init($oForm, $aElement, $aObjectType, $sXPath, $sNamePrefix);
 			if($this->i18n()) {
 				if(($this->i18n_getDefLangUid() === FALSE)) {
 					$this->oForm->mayday("DATAHANDLER: <b>/i18n/use</b> is active but no <b>/i18n/defLangUid</b> given");
@@ -102,11 +102,17 @@
 		 * @return	array		GET and POST vars array
 		 */
 		function _GP() {
-
-			return t3lib_div::array_merge_recursive_overrule(
-				$this->_G(),
-				$this->_P()
-			);
+            $g = $this->_G();
+            if (!is_array($g)) {
+                $g = array();
+            }
+            $p = $this->_P();
+            if (!is_array($p)) {
+                $p = array();
+            }
+            $a = $g;
+            \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($a, $p);
+            return $a;
 		}
 
 		/**
@@ -119,10 +125,9 @@
 		 * @return	array		GET and POST vars array
 		 */
 		function _PG() {
-			return t3lib_div::array_merge_recursive_overrule(
-				$this->_P(),
-				$this->_G()
-			);
+            $a = $this->_P();
+			\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($a, $this->_G());
+            return $a;
 		}
 
 		function forceSubmittedValue($sSubmittedValue) {
@@ -143,7 +148,7 @@
 			
 			$aP = $this->oForm->_getRawPost($sFormId);
 
-			if(array_key_exists("AMEOSFORMIDABLE_SUBMITTED", $aP) && (trim($aP["AMEOSFORMIDABLE_SUBMITTED"]) !== "")) {
+			if(is_array($aP) && array_key_exists("AMEOSFORMIDABLE_SUBMITTED", $aP) && (trim($aP["AMEOSFORMIDABLE_SUBMITTED"]) !== "")) {
 				return trim($aP["AMEOSFORMIDABLE_SUBMITTED"]);
 			}
 
@@ -493,13 +498,14 @@
 
 				$form_id = $this->oForm->formid;
 
-				$aPost = t3lib_div::_POST();
+				$aPost = \TYPO3\CMS\Core\Utility\GeneralUtility::_POST();
 
 				$aPost	= is_array($aPost[$form_id]) ? $aPost[$form_id] : array();
 				$aFiles	= is_array($GLOBALS["_FILES"][$form_id]) ? $GLOBALS["_FILES"][$form_id] : array();
-				$aP = t3lib_div::array_merge_recursive_overrule($aPost, $aFiles);
+                $aP = $aPost;
+				\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($aP, $aFiles);
 
-				t3lib_div::stripSlashesOnArray($aP);
+				\Ameos\AmeosFormidable\Utility\GeneralUtility::stripSlashesOnArray($aP);
 
 				if(array_key_exists("AMEOSFORMIDABLE_ENTRYID", $aP) && trim($aP["AMEOSFORMIDABLE_ENTRYID"]) !== "") {
 					return intval($aP["AMEOSFORMIDABLE_ENTRYID"]);
@@ -922,8 +928,9 @@
 						$oDataSet =& $this->oForm->aORenderlets[$sAbsName]->dbridged_getCurrentDsetObject();
 
 						// sure that dataset is anchored, as we already tested it to be in noSubmit_edit
-						$aData = t3lib_div::array_merge_recursive_overrule(		// allowing GET to set values
-							$oDataSet->getData(),
+                        $aData = $oDataSet->getData();
+                        \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(		// allowing GET to set values
+							$aData,
 							$this->_G()
 						);
 
@@ -951,14 +958,15 @@
 
 
 						$aStored = $this->_getStoredData();
-						$aData = t3lib_div::array_merge_recursive_overrule(		// allowing GET to set values
-							$aStored,
+                        $aData = $aStored; 
+						\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(		// allowing GET to set values
+							$aData,
 							$this->_G()
 						);
 
 						$sNewName = $this->oForm->aORenderlets[$sAbsName]->getName();
 
-						if(array_key_exists($sNewName, $aData)) {
+						if(is_array($aData) && array_key_exists($sNewName, $aData)) {
 							$mRes = $this->oForm->aORenderlets[$sAbsName]->_unFlatten($aData[$sNewName]);
 						}
 					}

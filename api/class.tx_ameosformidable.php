@@ -219,9 +219,9 @@ class tx_ameosformidable {
 
 	var $executionInfo = array();
 
-	function tx_ameosformidable() {
-		$this->cObj = t3lib_div::makeInstance('tslib_cObj');
-		$this->aPostFlags = t3lib_div::_GP("postflag");
+	function __construct() {
+		$this->cObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
+		$this->aPostFlags = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP("postflag");
 		if(!is_array($this->aPostFlags)) {
 			$this->aPostFlags = array();
 		}
@@ -297,12 +297,12 @@ class tx_ameosformidable {
 	function init(&$oParent, $mXml, $iForcedEntryId = FALSE) {
 		$this->garbageCollector();
 		$this->sessionStart();
-		$this->start_tstamp	= t3lib_div::milliseconds();
+		$this->start_tstamp	= \TYPO3\CMS\Core\Utility\GeneralUtility::milliseconds();
 
 		$this->makeHtmlParser();
 		$this->_makeJsonObj();
 
-		if($this->__getEnvExecMode() !== "FE") {	// virtualizing FE for BE and eID (ajax) modes
+		if(self::__getEnvExecMode() !== "FE") {	// virtualizing FE for BE and eID (ajax) modes
 			$this->__virtualizeFE();
 		}
 
@@ -310,13 +310,13 @@ class tx_ameosformidable {
 	*
 	*/
 		$this->sExtPath = PATH_formidable;
-		$this->sExtRelPath = t3lib_extMgm::siteRelPath("ameos_formidable");
-		$this->sExtWebPath = t3lib_div::getIndpEnv("TYPO3_SITE_URL") . t3lib_extMgm::siteRelPath("ameos_formidable");
+		$this->sExtRelPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath("ameos_formidable");
+		$this->sExtWebPath = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_SITE_URL") . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath("ameos_formidable");
 
 
 
 		$this->sApiVersion = $GLOBALS["TYPO3_CONF_VARS"]["EXTCONF"]["ameos_formidable"]["ext_emconf.php"]["version"];
-		$this->sApiVersionInt = t3lib_div::int_from_ver($GLOBALS["TYPO3_CONF_VARS"]["EXTCONF"]["ameos_formidable"]["ext_emconf.php"]["version"]);
+		$this->sApiVersionInt = \TYPO3\CMS\Core\Utility\VersionNumberUtility::convertVersionNumberToInteger($GLOBALS["TYPO3_CONF_VARS"]["EXTCONF"]["ameos_formidable"]["ext_emconf.php"]["version"]);
 
 		$this->conf =& $GLOBALS["TSFE"]->config["config"]["tx_ameosformidable."];
 
@@ -371,11 +371,11 @@ class tx_ameosformidable {
 			$this->sXpathToElements = "/body/";
 		}
 
-		if(t3lib_div::cmpIP(t3lib_div::getIndpEnv('REMOTE_ADDR'), $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'])) {
+		if(\TYPO3\CMS\Core\Utility\GeneralUtility::cmpIP(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REMOTE_ADDR'), $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'])) {
 			$this->bDebugIP = TRUE;
 		}
 
-		$this->oJs = t3lib_div::makeInstance("formidable_jslayer");
+		$this->oJs = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("formidable_jslayer");
 		$this->oJs->_init($this);
 
 
@@ -387,7 +387,7 @@ class tx_ameosformidable {
 			$this->formid = $this->callRunneable($this->formid);
 		}
 
-		//$this->uniqueid = $this->formid . "_" . t3lib_div::shortMd5(serialize($this->_aConf) . "cUid:" . $this->_oParent->cObj->data["uid"], 5);
+		//$this->uniqueid = $this->formid . "_" . \TYPO3\CMS\Core\Utility\GeneralUtility::shortMd5(serialize($this->_aConf) . "cUid:" . $this->_oParent->cObj->data["uid"], 5);
 
 		// CHECKING FORMID COLLISION IN PAGE
 		if(!array_key_exists($this->formid, $GLOBALS["TYPO3_CONF_VARS"]["EXTCONF"]["ameos_formidable"]["context"]["forms"])/* || !$this->defaultFalse($this->sXpathToMeta . "formwrap")*/) {
@@ -682,7 +682,7 @@ class tx_ameosformidable {
 	}
 
 	function isParentTypo3Plugin() {
-		return (isset($this->oParent) && is_object($this->oParent) && is_a($this->oParent, "tslib_pibase"));
+		return (isset($this->oParent) && is_object($this->oParent) && is_a($this->oParent, "\TYPO3\CMS\Frontend\Plugin\AbstractPlugin"));
 	}
 
 	function isParentTypo3PluginCached() {
@@ -702,7 +702,7 @@ class tx_ameosformidable {
 			# when cached, we cannot keep track of displays
 			# therefore we consider that no display is the first one
 			$this->bIsFirstDisplay = FALSE;
-		} elseif($this->__getEnvExecMode() === "BE") {
+		} elseif(self::__getEnvExecMode() === "BE") {
 			# TODO: track displays for BE
 			$this->bIsFirstDisplay = FALSE;
 		} else {
@@ -710,9 +710,9 @@ class tx_ameosformidable {
 				"parameter" => $GLOBALS["TSFE"]->id
 			)));
 
-			$sRefererUrl = t3lib_div::getIndpEnv("HTTP_REFERER");
+			$sRefererUrl = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("HTTP_REFERER");
 
-			$this->bIsFirstDisPlay = !t3lib_div::isFirstPartOfStr(
+			$this->bIsFirstDisPlay = !\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr(
 				$sRefererUrl,
 				$sCurrentPageUrl
 			);
@@ -723,7 +723,7 @@ class tx_ameosformidable {
 
 	function initAPI(&$oParent) {
 		$this->_oParent =& $oParent;
-		$this->formid = t3lib_div::shortMD5(rand());
+		$this->formid = \TYPO3\CMS\Core\Utility\GeneralUtility::shortMD5(rand());
 	}
 
 	function initView(&$oParent, $mXml, /*\IFormidable_ds_collection*/ &$oCollection = NULL) {
@@ -745,7 +745,7 @@ class tx_ameosformidable {
 	 */
 	function makeHtmlParser() {
 		if($this->oHtml === FALSE) {
-			$this->oHtml = t3lib_div::makeInstance("t3lib_parsehtml");
+			$this->oHtml = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("Ameos\\AmeosFormidable\\Html\\HtmlParser");
 		}
 	}
 
@@ -764,7 +764,7 @@ class tx_ameosformidable {
 	function analyzeFormAction() {
 
 		if($this->isFormActionTransparent()) {
-			$aGet = t3lib_div::_GET();
+			$aGet = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET();
 
 			if(array_key_exists("id", $aGet)) {
 				unset($aGet["id"]);
@@ -777,8 +777,8 @@ class tx_ameosformidable {
 	}
 
 	function formActionAdd($aParams) {
-		if($this->isFormActionTransparent()) {
-			$this->aFormAction = t3lib_div::array_merge_recursive_overrule(
+		if($this->isFormActionTransparent()) {            
+			\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
 				$this->aFormAction,
 				$aParams
 			);
@@ -857,26 +857,26 @@ class tx_ameosformidable {
 	function getFormAction() {
 
 		if($this->isFormActionTransparent()) {
-			$sEnvMode = $this->__getEnvExecMode();
+			$sEnvMode = self::__getEnvExecMode();
 
 			if($sEnvMode === "BE") {
-				$sBaseUrl = t3lib_div::getIndpEnv("TYPO3_REQUEST_URL");
+				$sBaseUrl = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_REQUEST_URL");
 			} elseif($sEnvMode === "EID") {
-				$sBaseUrl = t3lib_div::getIndpEnv("HTTP_REFERER");
+				$sBaseUrl = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("HTTP_REFERER");
 			} elseif($sEnvMode === "FE") {
-				//$aParams = t3lib_div::_GET();
+				//$aParams = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET();
 			}
 
 			if($sEnvMode === "BE" || $sEnvMode === "EID") {
-				$sNewUrl = t3lib_div::linkThisUrl(
+				$sNewUrl = \TYPO3\CMS\Core\Utility\GeneralUtility::linkThisUrl(
 					$sBaseUrl,
 					$this->aFormAction
 				);
-			} elseif($sEnvMode === "FE") {
+			} elseif($sEnvMode === "FE") {                
 				$sNewUrl = $this->toWebPath(
 					$this->cObj->typolink_URL(array(
 						"parameter" => $GLOBALS["TSFE"]->id,
-						"additionalParams" => t3lib_div::implodeArrayForUrl(
+						"additionalParams" => \TYPO3\CMS\Core\Utility\GeneralUtility::implodeArrayForUrl(
 							"",
 							$this->aFormAction
 						)
@@ -914,7 +914,7 @@ class tx_ameosformidable {
 	}
 
 	function setParamsToRemove($aParams) {
-		$this->aParamsToRemove = t3lib_div::array_merge_recursive_overrule(
+		\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
 			$this->aParamsToRemove,
 			$aParams
 		);
@@ -954,7 +954,7 @@ class tx_ameosformidable {
 			$sFormId = $this->formid;
 		}
 
-		$aRawPost = t3lib_div::_POST();
+		$aRawPost = \TYPO3\CMS\Core\Utility\GeneralUtility::_POST();
 		$aRawPost = is_array($aRawPost[$sFormId]) ? $aRawPost[$sFormId] : array();
 
 		if(array_key_exists("AMEOSFORMIDABLE_ADDPOSTVARS", $aRawPost) && trim($aRawPost["AMEOSFORMIDABLE_ADDPOSTVARS"]) !== "") {
@@ -973,7 +973,7 @@ class tx_ameosformidable {
 			$sFormId = $this->formid;
 		}
 
-		$aRawGet = t3lib_div::_GET();
+		$aRawGet = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET();
 		$aRawGet = is_array($aRawGet[$sFormId]) ? $aRawGet[$sFormId] : array();
 
 		if(array_key_exists("action", $aRawGet) && trim($aRawGet["action"]) !== "") {
@@ -1052,7 +1052,7 @@ class tx_ameosformidable {
 					);
 
 					if(array_key_exists($sKey . ".", $aConf["control."])) {
-						$aTemp["control"]["datahandler"] = t3lib_div::array_merge_recursive_overrule(
+						\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
 							$aTemp["control"]["datahandler"],
 							$this->_removeDots($aConf["control."][$sKey . "."])
 						);
@@ -1063,7 +1063,7 @@ class tx_ameosformidable {
 					);
 
 					if(array_key_exists($sKey . ".", $aConf["control."])) {
-						$aTemp["control"]["renderer"] = t3lib_div::array_merge_recursive_overrule(
+						\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
 							$aTemp["control"]["renderer"],
 							$this->_removeDots($aConf["control."][$sKey . "."])
 						);
@@ -1081,7 +1081,7 @@ class tx_ameosformidable {
 							);
 
 							if(array_key_exists($sActKey . ".", $aConf["control."][$sKey])) {
-								$aTemp["control"]["actionlets"]["actionlet-" . $sActKey] = t3lib_div::array_merge_recursive_overrule(
+								\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
 									$aTemp["control"]["actionlets"]["actionlet-" . $sActKey],
 									$this->_removeDots($aConf["control."][$sKey][$sActKey . "."])
 								);
@@ -1099,7 +1099,7 @@ class tx_ameosformidable {
 							);
 
 							if(array_key_exists($sActKey . ".", $aConf["control."][$sKey])) {
-								$aTemp["control"]["datasources"]["datasource-" . $sActKey] = t3lib_div::array_merge_recursive_overrule(
+								\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
 									$aTemp["control"]["datasources"]["datasource-" . $sActKey],
 									$this->_removeDots($aConf["control."][$sKey][$sActKey . "."])
 								);
@@ -1193,7 +1193,7 @@ class tx_ameosformidable {
 						$aValidator["type"] = $aValType[1];
 
 						if(array_key_exists($sKey . ".", $aTenDot["validators."])) {
-							$aValidator = t3lib_div::array_merge_recursive_overrule(
+							\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
 								$aValidator,
 								$this->_removeDots($aTenDot["validators."][$sKey . "."])
 							);
@@ -1207,7 +1207,7 @@ class tx_ameosformidable {
 			unset($aTenDot["validators."]);
 		}
 
-		$aRdt = t3lib_div::array_merge_recursive_overrule(
+		\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
 			$aRdt,
 			$this->_removeDots($aTenDot)
 		);
@@ -1288,7 +1288,7 @@ class tx_ameosformidable {
 
 			$aExtends = explode("::", $sExtends);
 			if(sizeof($aExtends) == 2) {
-				$sFile = t3lib_div::getFileAbsFileName($aExtends[0]);
+				$sFile = \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($aExtends[0]);
 				$sClass = $aExtends[1];
 
 				if(file_exists($sFile) && is_readable($sFile)) {
@@ -1302,7 +1302,7 @@ class tx_ameosformidable {
 
 				// trying to auto-determine class-name
 
-				$sFile = t3lib_div::getFileAbsFileName($aExtends[0]);
+				$sFile = \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($aExtends[0]);
 				if(file_exists($sFile) && is_readable($sFile)) {
 					$aClassesBefore = get_declared_classes();
 
@@ -1417,7 +1417,7 @@ SANDBOXCLASS;
 		$aTempCBs = array();
 		reset($aMetas);
 		while(list($sKey,) = each($aMetas)) {
-			if($sKey{0} === "c" && $sKey{1} === "o" && t3lib_div::isFirstPartOfStr(strtolower($sKey), "codebehind")) {
+			if($sKey{0} === "c" && $sKey{1} === "o" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr(strtolower($sKey), "codebehind")) {
 				$aTempCBs[$sKey] = $this->buildCodeBehind(
 					$aMetas[$sKey]
 				);
@@ -1496,7 +1496,7 @@ SANDBOXCLASS;
 	}
 
 	function initPhpCb($sKey) {
-		$sEnv = $this->__getEnvExecMode();
+		$sEnv = self::__getEnvExecMode();
 		if($sEnv === "EID") {
 			if(method_exists($this->aCodeBehinds["php"][$sKey]["object"], "initajax")) {
 				$this->aCodeBehinds["php"][$sKey]["object"]->initajax($this);	// changed: avoid call-time pass-by-reference
@@ -1528,8 +1528,9 @@ SANDBOXCLASS;
 			}
 		}
 
-		$aConfig = t3lib_div::array_merge_recursive_overrule(
-			$aTempConfig,
+        $aConfig = $aTempConfig;
+		\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
+			$aConfig,
 			array(
 				"formid" => $this->formid
 			)
@@ -1544,7 +1545,7 @@ SANDBOXCLASS;
 
 	function &buildJsCbObject($aCB) {
 		require_once(PATH_formidable . "api/class.mainjscb.php");
-		$oJsCb = t3lib_div::makeInstance("formidable_mainjscb");
+		$oJsCb = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("formidable_mainjscb");
 		$oJsCb->aConf = $aCB;
 /*		$oJsCb->init(
 			$this,
@@ -1558,7 +1559,7 @@ SANDBOXCLASS;
 		$sCBRef = $aCB["path"];
 		$sName = $aCB["name"];
 
-		if($sCBRef{0} === "E" && $sCBRef{1} === "X" && t3lib_div::isFirstPartOfStr($sCBRef, "EXT:")) {
+		if($sCBRef{0} === "E" && $sCBRef{1} === "X" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sCBRef, "EXT:")) {
 			$sCBRef = substr($sCBRef, 4);
 			$sPrefix = "EXT:";
 		} else {
@@ -1571,7 +1572,7 @@ SANDBOXCLASS;
 		$sFilePath = $this->toServerPath($sFileRef);
 
 		// determining type of the CB
-		$sFileExt = strtolower(array_pop(t3lib_div::revExplode(".", $sFileRef, 2)));
+		$sFileExt = strtolower(array_pop(\TYPO3\CMS\Core\Utility\GeneralUtility::revExplode(".", $sFileRef, 2)));
 		switch($sFileExt) {
 			case "php": {
 				if(is_file($sFilePath) && is_readable($sFilePath)) {
@@ -1731,7 +1732,7 @@ SANDBOXCLASS;
 				unset($GLOBALS["_SESSION"]["ameos_formidable"]["stepper"][$sStepperId]);
 			} else {
 
-				$aP = t3lib_div::_POST();
+				$aP = \TYPO3\CMS\Core\Utility\GeneralUtility::_POST();
 
 				if(array_key_exists("AMEOSFORMIDABLE_STEP", $aP) && array_key_exists("AMEOSFORMIDABLE_STEP_HASH", $aP)) {
 
@@ -1818,7 +1819,7 @@ SANDBOXCLASS;
 	function _processServerEvents($aTriggers) {
 
 		$aP = $this->_getRawPost();
-		if(array_key_exists("AMEOSFORMIDABLE_SERVEREVENT", $aP) && (trim($aP["AMEOSFORMIDABLE_SERVEREVENT"]) !== "")) {
+		if(is_array($aP) && array_key_exists("AMEOSFORMIDABLE_SERVEREVENT", $aP) && (trim($aP["AMEOSFORMIDABLE_SERVEREVENT"]) !== "")) {
 			if(array_key_exists($aP["AMEOSFORMIDABLE_SERVEREVENT"], $this->aServerEvents)) {
 				$aEvent = $this->aServerEvents[$aP["AMEOSFORMIDABLE_SERVEREVENT"]];
 				if(in_array($aEvent["when"], $aTriggers)) {
@@ -1899,7 +1900,7 @@ SANDBOXCLASS;
 		}
 
 		if(!array_key_exists($sFormId, $this->aRawPost) || ($bCache === FALSE)) {
-			$aPost = t3lib_div::_POST();
+			$aPost = \TYPO3\CMS\Core\Utility\GeneralUtility::_POST();
 			$aPost	= is_array($aPost[$sFormId]) ? $aPost[$sFormId] : array();
 			$aFiles = $this->_getRawFile();
 
@@ -1920,7 +1921,7 @@ SANDBOXCLASS;
 						reset($aAddPostVars[$sKey]["params"]);
 						while(list($sParam, $sValue) = each($aAddPostVars[$sKey]["params"])) {
 
-							$aAddParams =  t3lib_div::array_merge_recursive_overrule(
+							\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
 								$aAddParams,
 								tx_ameosformidable::explodeUrl2Array(
 									$sParam . "=" . $sValue,
@@ -1932,8 +1933,18 @@ SANDBOXCLASS;
 				}
 			}
 
-			$aRes = t3lib_div::array_merge_recursive_overrule($aPost, $aFiles);
-			$aRes = t3lib_div::array_merge_recursive_overrule($aRes, $aAddParams);
+            $aRes = $aPost;
+            \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($aRes, $aFiles);
+            if (!is_array($aRes)) {
+                $aRes = array();
+            }
+            if (!is_array($aAddParams)) {
+                $aAddParams = array();
+            }
+			\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($aRes, $aAddParams);
+            if (!is_array($aRes)) {
+                $aRes = array();
+            }
 			reset($aRes);
 
 			if($bCache === FALSE) {
@@ -1947,8 +1958,8 @@ SANDBOXCLASS;
 	}
 
 	function explodeUrl2Array($string,$multidim=FALSE) {
-		if(function_exists("t3lib_div::explodeUrl2Array")) {
-			return t3lib_div::explodeUrl2Array($string, $multidim);
+		if(function_exists("\TYPO3\CMS\Core\Utility\GeneralUtility::explodeUrl2Array")) {
+			return \TYPO3\CMS\Core\Utility\GeneralUtility::explodeUrl2Array($string, $multidim);
 		}
 
 		$output = array();
@@ -1972,7 +1983,7 @@ SANDBOXCLASS;
 		}
 
 		if(!array_key_exists($sFormId, $this->aRawGet)) {
-			$aGet = t3lib_div::_GET($sFormId);
+			$aGet = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET($sFormId);
 			$this->aRawGet[$sFormId] = is_array($aGet) ? $aGet : array();
 		}
 
@@ -2045,7 +2056,7 @@ SANDBOXCLASS;
 	function _includeLibraries() {
 		$this->oRenderer->_includeLibraries();
 		if(($sLibs = $this->_navConf($this->sXpathToMeta . "libs")) !== FALSE) {
-			$aLibs = t3lib_div::trimExplode(",", $sLibs);
+			$aLibs = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $sLibs);
 			reset($aLibs);
 
 			if($this->oJs->_mayLoadJQuery()) {
@@ -2161,7 +2172,7 @@ SANDBOXCLASS;
 
 			if(is_array($val)) {
 
-				if($key{0} === "x" && t3lib_div::isFirstPartOfStr($key, "xmlbuilder")) {
+				if($key{0} === "x" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($key, "xmlbuilder")) {
 
 					$aTemp = $this->array_add(
 						$this->callRunneable($val),
@@ -2204,7 +2215,7 @@ SANDBOXCLASS;
 
 			if(is_array($val)) {
 
-				if($key{0} === "i" && t3lib_div::isFirstPartOfStr($key, "includexml")) {
+				if($key{0} === "i" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($key, "includexml")) {
 
 					if(array_key_exists("path", $val)) {
 						$sPath = $val["path"];
@@ -2229,7 +2240,7 @@ SANDBOXCLASS;
 						$iNewKey = count($aDebug) - 1;
 
 						$aXml = $this->_getXml(
-							//t3lib_div::getFileAbsFileName($sPath),
+							//\TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($sPath),
 							$this->toServerPath($sPath),
 							TRUE	// subXml, adds virtualroot for parsing
 						);
@@ -2322,7 +2333,7 @@ SANDBOXCLASS;
 				}
 			} else {
 
-				if($key{0} === "i" && t3lib_div::isFirstPartOfStr($key, "includexml")) {
+				if($key{0} === "i" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($key, "includexml")) {
 
 					$aDebug[] = array(
 						$sParent => $val,
@@ -2332,7 +2343,7 @@ SANDBOXCLASS;
 					$iNewKey = count($aDebug) - 1;
 
 					$aXml = $this->_getXml(
-						t3lib_div::getFileAbsFileName($val),
+						\TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($val),
 						TRUE	// subXml, adds virtualroot for parsing
 					);
 
@@ -2392,7 +2403,7 @@ SANDBOXCLASS;
 
 			if(is_array($val)) {
 
-				if($key{0} === "i" && t3lib_div::isFirstPartOfStr($key, "includets")) {
+				if($key{0} === "i" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($key, "includets")) {
 
 					if(array_key_exists("path", $val)) {
 
@@ -2413,7 +2424,7 @@ SANDBOXCLASS;
 			}
 			else {
 
-				if($key{0} === "i" && t3lib_div::isFirstPartOfStr($key, "includets")) {
+				if($key{0} === "i" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($key, "includets")) {
 
 					$aTs = $this->_getTS($val);
 
@@ -2512,12 +2523,11 @@ SANDBOXCLASS;
 			while(list($sModKey, $aModifier) = each($aModifiers)) {
 
 				if($this->_matchConditions($aModifier)) {
-
-					$aSubConf =
-						t3lib_div::array_merge_recursive_overrule(
-							$aSubConf,
-							$aSubConf["modifiers"][$sModKey]["modification"]
-						);
+					
+                    \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
+                        $aSubConf,
+                        $aSubConf["modifiers"][$sModKey]["modification"]
+                    );
 				}
 			}
 		}
@@ -2624,7 +2634,7 @@ SANDBOXCLASS;
 	}
 
 	function relativizeName($sOurs, $sTheirs) {
-		if(t3lib_div::isFirstPartOfStr($sOurs, $sTheirs)) {
+		if(\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sOurs, $sTheirs)) {
 			return substr($sOurs, strlen($sTheirs) + 1);
 		}
 
@@ -2755,7 +2765,7 @@ SANDBOXCLASS;
 			reset($aConf);
 			while(list($sElementName, ) = each($aConf)) {
 
-				if($sElementName{0} === "d" && t3lib_div::isFirstPartOfStr($sElementName, "datasource") && !t3lib_div::isFirstPartOfStr($sElementName, "datasources")) {
+				if($sElementName{0} === "d" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sElementName, "datasource") && !\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sElementName, "datasources")) {
 
 					$aElement =& $aConf[$sElementName];
 
@@ -2807,7 +2817,7 @@ SANDBOXCLASS;
 			reset($aConf);
 			while(list($sElementName,) = each($aConf)) {
 
-				if($sElementName{0} === "r" && t3lib_div::isFirstPartOfStr($sElementName, "renderlet")) {
+				if($sElementName{0} === "r" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sElementName, "renderlet")) {
 
 					#$aElement =& $aConf[$sElementName];
 
@@ -2870,13 +2880,13 @@ SANDBOXCLASS;
 
 		$this->sXmlVersion = $this->_navConf("/version", $this->_aConf);
 		if(($this->sXmlMinVersion = $this->_navConf("/minversion", $this->_aConf)) !== FALSE) {
-			if(t3lib_div::int_from_ver($this->sApiVersion) < t3lib_div::int_from_ver($this->sXmlMinVersion)) {
+			if(\TYPO3\CMS\Core\Utility\VersionNumberUtility::convertVersionNumberToInteger($this->sApiVersion) < \TYPO3\CMS\Core\Utility\VersionNumberUtility::convertVersionNumberToInteger($this->sXmlMinVersion)) {
 				$this->mayday("The given XML requires a version of Formidable (<b>" . $this->sXmlMinVersion . "</b> or above) more recent than the one installed (<b>" . $this->sApiVersion . "</b>).");
 			}
 		}
 
 		if(($this->sXmlMaxVersion = $this->_navConf("/maxversion", $this->_aConf)) !== FALSE) {
-			if(t3lib_div::int_from_ver($this->sApiVersion) > t3lib_div::int_from_ver($this->sXmlMaxVersion)) {
+			if(\TYPO3\CMS\Core\Utility\VersionNumberUtility::convertVersionNumberToInteger($this->sApiVersion) > \TYPO3\CMS\Core\Utility\VersionNumberUtility::convertVersionNumberToInteger($this->sXmlMaxVersion)) {
 				$this->mayday("The given XML requires a version of Formidable (<b>" . $this->sXmlMaxVersion . "</b> maximum) older than the one installed (<b>" . $this->sApiVersion . "</b>).");
 			}
 		}
@@ -3043,8 +3053,8 @@ SANDBOXCLASS;
 					if($this->conf["cache."]["enabled"] == 1) {
 
 						if(!@is_dir(PATH_site . "typo3temp/" . $sCacheDir)) {
-							if(function_exists("t3lib_div::mkdir_deep")) {
-								t3lib_div::mkdir_deep(PATH_site . "typo3temp/", $sCacheDir);
+							if(function_exists("\TYPO3\CMS\Core\Utility\GeneralUtility::mkdir_deep")) {
+								\TYPO3\CMS\Core\Utility\GeneralUtility::mkdir_deep(PATH_site . "typo3temp/", $sCacheDir);
 							} else {
 								$this->div_mkdir_deep(PATH_site . "typo3temp/", $sCacheDir);
 							}
@@ -3072,7 +3082,7 @@ SANDBOXCLASS;
 	 * @param	string		$sObjectType: type of the object; something like renderlets, datahandlers, ...
 	 * @return	object		Built object or FALSE if failed
 	 */
-	function _loadObject($sInternalKey, $sObjectType) {
+	static function _loadObject($sInternalKey, $sObjectType) {
 
 		global $TYPO3_CONF_VARS;	// needed to allow XCLASS on renderlets
 										// http://bugs.typo3.org/view.php?id=9812
@@ -3199,7 +3209,7 @@ SANDBOXCLASS;
 		return $bMatch;
 	}
 
-	function templateDataAsString($mData) {
+	static function templateDataAsString($mData) {
 		if(is_array($mData)) {
 			if(array_key_exists("__compiled", $mData)) {
 				$mData = $mData["__compiled"];
@@ -3215,7 +3225,7 @@ SANDBOXCLASS;
 		$aParams = array();
 		$sArgs = trim($sArgs);
 		if($sArgs !== "") {
-			$aArgs = t3lib_div::trimExplode(",", $sArgs);
+			$aArgs = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $sArgs);
 			reset($aArgs);
 			while(list(, $sArg) = each($aArgs)) {
 				$sTrimArg = trim($sArg);
@@ -3251,7 +3261,7 @@ SANDBOXCLASS;
 		$sClassPath = "class." . $sInterpreter . ".php";
 
 		require_once(PATH_formidable . "api/" . $sClassPath);
-		$oMethods = t3lib_div::makeInstance("formidable_" . $sInterpreter);
+		$oMethods = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("formidable_" . $sInterpreter);
 		$oMethods->_init($this);
 
 		return $oMethods->process(
@@ -3620,7 +3630,7 @@ SANDBOXCLASS;
 	function evaluate_EXTPathString($sString) {
 
 		if($sString{0} === 'E' && $sString{1} === 'X' && substr($sString, 0, 4) === 'EXT:') {
-			return t3lib_div::getFileAbsFileName($sString);
+			return \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($sString);
 		}
 
 		if($sString{0} === 'R' && $sString{1} === 'E' && $sString{2} === 'L' && $sString{3} === ':') {
@@ -3683,7 +3693,7 @@ SANDBOXCLASS;
 
 				if(is_array($curZone) && is_array($mValue) && $bMergeIfArray === TRUE) {
 					// merging arrays
-					$curZone = t3lib_div::array_merge_recursive_overrule(
+					\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
 						$curZone,
 						$mValue
 					);
@@ -3792,11 +3802,11 @@ SANDBOXCLASS;
 						// we have to search on a criteria sequence
 						$sWhat = $aTemp[0];
 						$sTempCrits = $aTemp[1];
-						$aTempCrits = t3lib_div::trimExplode(",", $sTempCrits);
+						$aTempCrits = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $sTempCrits);
 						reset($aTempCrits);
 						$aCrits = array();
 						while(list(, $sTempCrit) = each($aTempCrits)) {
-							$aCrit = t3lib_div::trimExplode("=", $sTempCrit);
+							$aCrit = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode("=", $sTempCrit);
 							$aCrits[$aCrit[0]] = $aCrit[1];
 						}
 
@@ -3915,7 +3925,7 @@ SANDBOXCLASS;
 			$aPath = explode("/", $sPath);
 			$sTable = $aPath[0];
 
-			t3lib_div::loadTCA($sTable);
+			\TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA($sTable);
 			return $this->_navConf($sPath, $GLOBALS["TCA"]);
 		}
 
@@ -3948,7 +3958,7 @@ SANDBOXCLASS;
 	function _render() {
 
 		if($this->bInited === FALSE) {
-			$this->start_tstamp	= t3lib_div::milliseconds();	// because it has not been initialized yet
+			$this->start_tstamp	= \TYPO3\CMS\Core\Utility\GeneralUtility::milliseconds();	// because it has not been initialized yet
 			$this->mayday("TRIED TO RENDER FORM BEFORE CALLING INIT() !");
 		}
 
@@ -4000,8 +4010,9 @@ SANDBOXCLASS;
 				$sDH = $this->oDataHandler->_doTheMagic(TRUE);
 
 				// Renderlets are rendered
-				$aRendered = t3lib_div::array_merge_recursive_overrule(
-					$this->_renderElements(),
+                $aRendered = $this->_renderElements();
+				\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
+					$aRendered,
 					$this->aPreRendered
 				);
 
@@ -4054,8 +4065,9 @@ SANDBOXCLASS;
 				$sDH = $this->oDataHandler->_doTheMagic(FALSE);
 
 				// Renderlets are rendered
-				$aRendered = t3lib_div::array_merge_recursive_overrule(
-					$this->_renderElements(),
+                $aRendered = $this->_renderElements();
+				\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
+					$aRendered,
 					$this->aPreRendered
 				);
 
@@ -4085,8 +4097,9 @@ SANDBOXCLASS;
 				$sDH = $this->oDataHandler->_doTheMagic(FALSE);
 
 				// Renderlets are rendered
-				$aRendered = t3lib_div::array_merge_recursive_overrule(
-					$this->_renderElements(),
+				$aRendered = $this->_renderElements();
+				\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
+					$aRendered,
 					$this->aPreRendered
 				);
 
@@ -4116,8 +4129,9 @@ SANDBOXCLASS;
 				$sDH = $this->oDataHandler->_doTheMagic(TRUE);
 
 				// Renderlets are rendered
-				$aRendered = t3lib_div::array_merge_recursive_overrule(
-					$this->_renderElements(),
+                $aRendered = $this->_renderElements();
+				\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
+					$aRendered,
 					$this->aPreRendered
 				);
 
@@ -4144,8 +4158,9 @@ SANDBOXCLASS;
 				$sDH = $this->oDataHandler->_doTheMagic(FALSE);
 
 				// Renderlets are rendered
-				$aRendered = t3lib_div::array_merge_recursive_overrule(
-					$this->_renderElements(),
+                $aRendered = $this->_renderElements();
+				\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
+					$aRendered,
 					$this->aPreRendered
 				);
 
@@ -4172,10 +4187,11 @@ SANDBOXCLASS;
 			$sDH = $this->oDataHandler->_doTheMagic(FALSE);
 
 			// Renderlets are rendered
-			$aRendered = t3lib_div::array_merge_recursive_overrule(
-				$this->_renderElements(),
-				$this->aPreRendered
-			);
+            $aRendered = $this->_renderElements();
+            \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
+                $aRendered,
+                $this->aPreRendered
+            );
 
 			// the renderer is executed
 			$aHtmlBag = $this->oRenderer->_render($aRendered);
@@ -4394,7 +4410,7 @@ SANDBOXCLASS;
 			$this->_clearFormInSession();
 		}
 
-		$this->end_tstamp = t3lib_div::milliseconds();
+		$this->end_tstamp = \TYPO3\CMS\Core\Utility\GeneralUtility::milliseconds();
 		
 		if(!empty($sDH)) {
 			return $aHtmlBag["FORMBEGIN"] . $sDH . $aHtmlBag["HIDDEN"] . $aHtmlBag["FORMEND"] . $debug;
@@ -4545,7 +4561,7 @@ JAVASCRIPT;
 	}
 
 	function attachPostInitTask($sScript, $sDesc = "", $sKey = FALSE) {
-		if($this->__getEnvExecMode() === "EID") {
+		if(self::__getEnvExecMode() === "EID") {
 			$this->attachPostInitTask_ajax(
 				$sScript,
 				$sDesc,
@@ -4606,7 +4622,7 @@ JAVASCRIPT;
 	 */
 	function attachInitTask($sScript, $sDesc = "", $sKey = FALSE, $bOutsideLoad = FALSE) {
 
-		if($this->__getEnvExecMode() === "EID") {
+		if(self::__getEnvExecMode() === "EID") {
 			$this->attachInitTask_ajax(
 				$sScript,
 				$sDesc,
@@ -4922,7 +4938,7 @@ JAVASCRIPT;
 
 		if(is_array($aObj)) {
 
-			$oObj = t3lib_div::makeInstance($aObj["CLASS"]);
+			$oObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance($aObj["CLASS"]);
 
 			if(!empty($aOParent) && is_object($aOParent[0])) {
 				$oObj->setParent($aOParent[0]);
@@ -5016,7 +5032,7 @@ JAVASCRIPT;
 
 			while(list($sCondKey, ) = each($aConditions)) {
 
-				if($sCondKey{0} === "c" && $sCondKey{1} === "o" && t3lib_div::isFirstPartOfStr($sCondKey, "condition")) {
+				if($sCondKey{0} === "c" && $sCondKey{1} === "o" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sCondKey, "condition")) {
 					$aCondition = $this->_navConf($sCondKey, $aConditions);
 					switch($sLogic) {
 						case "OR": {
@@ -5073,7 +5089,7 @@ JAVASCRIPT;
 				case "USERID" :
 				case "USERIDS" : {
 
-					$aUserIds = t3lib_div::trimExplode(",", $aInfos);
+					$aUserIds = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $aInfos);
 
 					if(is_array($aUserIds)) {
 						return in_array(
@@ -5093,7 +5109,7 @@ JAVASCRIPT;
 				case "USERNAME" :
 				case "USERNAMES" : {
 
-					$aUserNames = t3lib_div::trimExplode(",", $aInfos);
+					$aUserNames = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $aInfos);
 
 					if(is_array($aUserNames)) {
 						return @in_array(
@@ -5107,8 +5123,8 @@ JAVASCRIPT;
 				case "USERGROUP" :
 				case "USERGROUPS" : {
 
-					$aUserGroups = t3lib_div::trimExplode(",", $aInfos);
-					$aCurrentUserGroups = t3lib_div::trimExplode(
+					$aUserGroups = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $aInfos);
+					$aCurrentUserGroups = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(
 						",",
 						$GLOBALS["TSFE"]->fe_user->user["usergroup"]
 					);
@@ -5234,7 +5250,7 @@ JAVASCRIPT;
 
 		if(is_array($aActionlets)) {
 			while(list($sKey, $aActionlet) = each($aActionlets)) {
-				if($sKey{0} === "a" && $sKey{1} === "c" && t3lib_div::isFirstPartOfStr($sKey, "actionlet") && !t3lib_div::isFirstPartOfStr($sKey, "actionlets")) {
+				if($sKey{0} === "a" && $sKey{1} === "c" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "actionlet") && !\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "actionlets")) {
 					$this->_executeActionlet($aActionlet, $aRendered, $sForm);
 				}
 			}
@@ -5294,20 +5310,20 @@ JAVASCRIPT;
 		$aHtml[] = "<a name = '" . $this->formid . "formidable_debugtop' />";
 
 		if($bExpand === FALSE) {
-			$aHtml[] = "<a href = 'javascript:void(Formidable.f(\"" . $this->formid . "\").toggleDebug())'><img src='" . t3lib_div::getIndpEnv("TYPO3_SITE_URL") . t3lib_extmgm::siteRelPath("ameos_formidable") . "/res/images/debug.gif' border='0' alt='Toggle FORMidable::debug()' title='Toggle FORMidable::debug()'></a>";
+			$aHtml[] = "<a href = 'javascript:void(Formidable.f(\"" . $this->formid . "\").toggleDebug())'><img src='" . \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_SITE_URL") . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath("ameos_formidable") . "/res/images/debug.gif' border='0' alt='Toggle FORMidable::debug()' title='Toggle FORMidable::debug()'></a>";
 			$aHtml[] = "<div id = '" . $this->formid . "_debugzone' style = 'font-family: Verdana; display: none; background-color: #bed1f4; padding-left: 10px; padding-top: 3px; padding-bottom: 10px;font-size: 9px;'>";
 		} else {
-			$aHtml[] = "<img src='" . t3lib_div::getIndpEnv("TYPO3_SITE_URL") . t3lib_extmgm::siteRelPath("ameos_formidable") . "/res/images/debug.gif' border='0' alt='Toggle FORMidable::debug()' title='Toggle FORMidable::debug()'>";
+			$aHtml[] = "<img src='" . \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_SITE_URL") . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath("ameos_formidable") . "/res/images/debug.gif' border='0' alt='Toggle FORMidable::debug()' title='Toggle FORMidable::debug()'>";
 			$aHtml[] = "<div id = '" . $this->formid . "_debugzone' style = 'font-family: Verdana; display: block; background-color: #bed1f4; padding-left: 10px; padding-top: 3px; padding-bottom: 10px;font-size: 9px;'>";
 		}
 
 		$aHtml[] = "<h4>FORMidable debug()</h4>";
 
-		$aHtml[] = "<h5>t3lib_div::_POST()</h5>";
-		$aHtml[] = t3lib_div::view_array(t3lib_div::_POST());
+		$aHtml[] = "<h5>\TYPO3\CMS\Core\Utility\GeneralUtility::_POST()</h5>";
+		$aHtml[] = \TYPO3\CMS\Core\Utility\GeneralUtility::view_array(\TYPO3\CMS\Core\Utility\GeneralUtility::_POST());
 
-		$aHtml[] = "<h5>t3lib_div::_GET()</h5>";
-		$aHtml[] = t3lib_div::view_array(t3lib_div::_GET());
+		$aHtml[] = "<h5>\TYPO3\CMS\Core\Utility\GeneralUtility::_GET()</h5>";
+		$aHtml[] = \TYPO3\CMS\Core\Utility\GeneralUtility::view_array(\TYPO3\CMS\Core\Utility\GeneralUtility::_GET());
 
 		/*$aHtml[] = "<ul>";
 		$aHtml[] = "<li><a href = 'http://typo3.org/documentation/document-library/ameos_formidable/' target = '_blank'>FORMidable user documentation</a></li>";
@@ -5341,7 +5357,7 @@ JAVASCRIPT;
 
 		$aHtml[] = "<a name = '" . $this->formid . "formidable_configuration' />";
 		$aHtml[] = "<h5>FORM configuration</h5>";
-		$aHtml[] = "<div WIDTH = '100%' style = 'HEIGHT: 400px; overflow: scroll'>" . t3lib_div::view_array($this->_aConf) . "</div>";
+		$aHtml[] = "<div WIDTH = '100%' style = 'HEIGHT: 400px; overflow: scroll'>" . \TYPO3\CMS\Core\Utility\GeneralUtility::view_array($this->_aConf) . "</div>";
 		$aHtml[] = "<p align = 'right'><a href = '#" . $this->formid . "formidable_debugtop' target = '_self'>^top^</a></p>";
 
 		$aHtml[] = "<a name = '" . $this->formid . "formidable_callstack' />";
@@ -5385,7 +5401,7 @@ JAVASCRIPT;
 			$aDebug[] = "<a href = '#" . $this->formid . "formidable_call" . ($numcall - 1) . "'>&lt;&lt; prev</a> / <a href = '#" . $this->formid . "formidable_call" . ($numcall + 1) . "'>next &gt;&gt;</a><br>";
 			$aDebug[] = "<strong>#" . $numcall ." - " . $name . "</strong>";
 			$aDebug[] = "<br/>";
-			$aDebug[] = "<span style='font-family: verdana;font-size: 9px; font-style: italic;'><b>(Total exec. time: </b>" . round(t3lib_div::milliseconds() - $this->start_tstamp, 4) / 1000 ." sec)</span>";
+			$aDebug[] = "<span style='font-family: verdana;font-size: 9px; font-style: italic;'><b>(Total exec. time: </b>" . round(\TYPO3\CMS\Core\Utility\GeneralUtility::milliseconds() - $this->start_tstamp, 4) / 1000 ." sec)</span>";
 			$aDebug[] = "<br/>";
 
 
@@ -5404,7 +5420,7 @@ JAVASCRIPT;
 				$aDebug[] = "<hr/>";
 			}
 
-//			$aDebug[] = "<p style='font-family: verdana;font-size: 9px; font-style: italic;'>" . t3lib_div::debug_trail() . "</p>";
+//			$aDebug[] = "<p style='font-family: verdana;font-size: 9px; font-style: italic;'>" . \TYPO3\CMS\Core\Utility\GeneralUtility::debug_trail() . "</p>";
 
 			//if($this->iDebug < 2)
 			//{
@@ -5414,7 +5430,7 @@ JAVASCRIPT;
 					if($bAnalyze) {
 						$aDebug[] = $this->_viewMixed($variable);
 					} else {
-						$aDebug[] = t3lib_div::view_array($variable);
+						$aDebug[] = \TYPO3\CMS\Core\Utility\GeneralUtility::view_array($variable);
 					}
 				}
 			//}
@@ -5435,7 +5451,7 @@ JAVASCRIPT;
 	 */
 	function mayday($msg) {
 
-		if($this->__getEnvExecMode() === "EID") {
+		if(self::__getEnvExecMode() === "EID") {
 			die("Formidable::Mayday\n\n" . trim(strip_tags($msg)));
 		}
 
@@ -5451,7 +5467,7 @@ JAVASCRIPT;
 		$aDebug[] = "<br/>";
 		$aDebug[] = "<span class='notice'><b>Formidable: </b>v" . $this->sApiVersion . "</span>";
 		$aDebug[] = "<br/>";
-		$aDebug[] = "<span class='notice'><b>Total exec. time: </b>" . round(t3lib_div::milliseconds() - $this->start_tstamp, 4) / 1000 ." sec</span>";
+		$aDebug[] = "<span class='notice'><b>Total exec. time: </b>" . round(\TYPO3\CMS\Core\Utility\GeneralUtility::milliseconds() - $this->start_tstamp, 4) / 1000 ." sec</span>";
 		$aDebug[] = "<br/>";
 
 
@@ -5466,8 +5482,8 @@ JAVASCRIPT;
 		$aDebug[] = "<span class='notice'><b>Call -3: </b>" . str_replace(PATH_site, "/", $aTrace3["file"]) . ":" . $aTrace3["line"]  . " | <b>" . $aTrace4["class"] . $aTrace4["type"] . $aTrace4["function"] . "</b></span><br />With parameters: " . (!empty($aTrace4["args"]) ? $this->_viewMixed($aTrace4["args"]) : " no parameters");
 		$aDebug[] = "<hr/>";
 
-		if(is_callable(array("t3lib_div", "debug_trail"))) {
-			$aDebug[] = "<span class='notice'>" . t3lib_div::debug_trail() . "</span>";
+		if(is_callable(array("\TYPO3\CMS\Core\Utility\GeneralUtility", "debug_trail"))) {
+			$aDebug[] = "<span class='notice'>" . \TYPO3\CMS\Core\Utility\GeneralUtility::debug_trail() . "</span>";
 			$aDebug[] = "<hr/>";
 		}
 
@@ -5534,7 +5550,7 @@ MAYDAYPAGE;
 /*		if($this->bDebug) {
 			die($sPage);
 		} elseif($this->bDebugIP) {
-			$sPage = "<h4 style='color: red'>This full detail error-message is displayed because your IP(" . t3lib_div::getIndpEnv('REMOTE_ADDR') . ") matches the TYPO3 devIPMask</h4>" . $sPage;
+			$sPage = "<h4 style='color: red'>This full detail error-message is displayed because your IP(" . \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REMOTE_ADDR') . ") matches the TYPO3 devIPMask</h4>" . $sPage;
 			die($sPage);
 		} elseif($GLOBALS["TSFE"]->TYPO3_CONF_VARS['FE']['pageNotFound_handling']) {
 			$GLOBALS["TSFE"]->pageNotFoundAndExit('FORMIDABLE Mayday: ' . $msg);
@@ -5586,7 +5602,7 @@ MAYDAYPAGE;
 	 * @param	[type]		$iLevel: ...
 	 * @return	[type]		...
 	 */
-	function _viewMixed($mMixed, $bRecursive = TRUE, $iLevel=0) {
+	static function _viewMixed($mMixed, $bRecursive = TRUE, $iLevel=0) {
 
 		$sStyle = "font-family: Verdana; font-size: 9px;";
 		$sStyleBlack = $sStyle . "color: black;";
@@ -5626,7 +5642,7 @@ MAYDAYPAGE;
 			if($bRecursive) {
 				$result = "<span style='" . $sStyleGreen . "'>OBJECT (" . get_class($mMixed) .") : </span>" . tx_ameosformidable::_viewMixed(get_object_vars($mMixed), FALSE, $iLevel + 1);
 			} else {
-				$result = "<span style='" . $sStyleGreen . "'>OBJECT (" . get_class($mMixed) .") : !RECURSION STOPPED!</span>";// . t3lib_div::view_array(get_object_vars($mMixed), FALSE);
+				$result = "<span style='" . $sStyleGreen . "'>OBJECT (" . get_class($mMixed) .") : !RECURSION STOPPED!</span>";// . \TYPO3\CMS\Core\Utility\GeneralUtility::view_array(get_object_vars($mMixed), FALSE);
 			}
 		} elseif(is_bool($mMixed)) {
 			$result = "<span style='" . $sStyleGreen . "'>BOOLEAN: </span>" . ($mMixed ? "TRUE" : "FALSE");
@@ -5669,7 +5685,7 @@ MAYDAYPAGE;
 		}
 
 		if($this->sDefaultLLLPrefix !== FALSE) {
-			if(t3lib_div::isFirstPartOfStr($mLabel, "LLL:") && !t3lib_div::isFirstPartOfStr($mLabel, "LLL:EXT:")) {
+			if(\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($mLabel, "LLL:") && !\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($mLabel, "LLL:EXT:")) {
 				$mLabel = str_replace("LLL:", "LLL:" . $this->sDefaultLLLPrefix . ":", $mLabel);
 			}
 		}
@@ -5684,7 +5700,7 @@ MAYDAYPAGE;
 			$sLLL = "";
 		}
 
-		if($sLLL{0} === "L" && t3lib_div::isFirstPartOfStr($sLLL, "LLL:")) {
+		if($sLLL{0} === "L" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sLLL, "LLL:")) {
 			if(TYPO3_MODE == "FE") {
 				// front end
 				return str_replace(
@@ -5752,7 +5768,7 @@ MAYDAYPAGE;
 		$bThrusted = FALSE
 	) {
 
-		// $tempUrl : the path of the template for use with t3lib_div::getUrl()
+		// $tempUrl : the path of the template for use with \TYPO3\CMS\Core\Utility\GeneralUtility::getUrl()
 		// $tempMarker :  the template subpart marker
 		// $aTags : the marker array for substitution
 		// $aExclude : tag names that should not be substituted
@@ -5764,8 +5780,8 @@ MAYDAYPAGE;
 		$templatePath = tx_ameosformidable::toServerPath($templatePath);
 
 		return tx_ameosformidable::_parseTemplateCode(
-			t3lib_parsehtml::getSubpart(
-				t3lib_div::getUrl($templatePath),
+			\Ameos\AmeosFormidable\Html\HtmlParser::getSubpart(
+				\TYPO3\CMS\Core\Utility\GeneralUtility::getUrl($templatePath),
 				$templateMarker
 			),
 			$aTags,
@@ -5815,7 +5831,7 @@ MAYDAYPAGE;
 	function _getParentExtSitePath() {
 
 		if(TYPO3_MODE === "FE") {
-			if(is_subclass_of($this->_oParent, "tslib_pibase")) {
+			if(is_subclass_of($this->_oParent, "\TYPO3\CMS\Frontend\Plugin\AbstractPlugin")) {
 				$sExtKey = $this->_oParent->extKey;
 			} else {
 				$sExtKey = "ameos_formidable";
@@ -5824,7 +5840,7 @@ MAYDAYPAGE;
 			$sExtKey = $GLOBALS["_EXTKEY"];
 		}
 
-		return t3lib_div::getIndpEnv("TYPO3_SITE_URL") . t3lib_extMgm::siteRelPath($sExtKey);
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_SITE_URL") . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath($sExtKey);
 	}
 
 	/**
@@ -5835,7 +5851,7 @@ MAYDAYPAGE;
 	 */
 	function _substLLLInHtml($sHtml) {
 
-		if($sHtml{0} === "L" && t3lib_div::isFirstPartOfStr($sHtml, "LLL:")) {
+		if($sHtml{0} === "L" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sHtml, "LLL:")) {
 			return $this->_getLLLabel($sHtml);
 		}
 
@@ -5948,8 +5964,8 @@ MAYDAYPAGE;
 		reset($aTags);
 		while(list($sName, $mVal) = each($aTags)) {
 			#debug($sName, "on remplace les subparts");
-			if(($sRdtSubPart = t3lib_parsehtml::getSubpart($sHtml, "###" . $sName . "###")) !== "") {
-				$sHtml = t3lib_parsehtml::substituteSubpart(
+			if(($sRdtSubPart = \Ameos\AmeosFormidable\Html\HtmlParser::getSubpart($sHtml, "###" . $sName . "###")) !== "") {
+				$sHtml = \Ameos\AmeosFormidable\Html\HtmlParser::substituteSubpart(
 					$sHtml,
 					"###" . $sName . "###",
 					$mVal["__compiled"],
@@ -6419,7 +6435,7 @@ MAYDAYPAGE;
 
 		if(!empty($this->aForcedUserObjParamsStack)) {
 			$aForcedParams = $this->getForcedUserObjParams();
-			$aParams = t3lib_div::array_merge_recursive_overrule($aParams, $aForcedParams);
+			\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($aParams, $aForcedParams);
 		}
 
 		return $aParams;
@@ -6508,7 +6524,7 @@ MAYDAYPAGE;
 				return $sRes;
 
 			} elseif(($this->_navConf("/userobj/cobj", $aUserobj)) !== FALSE) {
-				if($this->__getEnvExecMode() === "BE") {
+				if(self::__getEnvExecMode() === "BE") {
 					return $this->cObj->cObjGetSingle(
 						$aUserobj["userobj"]["cobj"],
 						$aUserobj["userobj"]["cobj."]
@@ -6528,9 +6544,9 @@ MAYDAYPAGE;
 						}
 				';
 
-			//	require_once(PATH_t3lib."class.t3lib_tsparser.php");
+			//	require_once(PATH_t3lib."class.TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser.php");
 
-				$oParser = t3lib_div::makeInstance("t3lib_tsparser");
+				$oParser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser");
 				$oParser->tt_track = 0;	// Do not log time-performance information
 				$oParser->setup = $GLOBALS["TSFE"]->tmpl->setup;
 
@@ -6548,7 +6564,7 @@ MAYDAYPAGE;
 							}
 						}
 
-						$oParser->setup["params."] = t3lib_div::array_merge_recursive_overrule(
+						\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
 							$oParser->setup["params."],
 							$aUserObjParams
 						);
@@ -6596,7 +6612,7 @@ MAYDAYPAGE;
 				if(strcasecmp($extension, "this") == 0)
 				{ $oExtension =& $this->_oParent;}
 				else
-				{ $oExtension = t3lib_div::makeInstance($extension);}
+				{ $oExtension = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance($extension);}
 
 				if(is_object($oExtension)) {
 
@@ -6635,7 +6651,7 @@ MAYDAYPAGE;
 			$aExec = tx_ameosformidable::parseForTemplate($sCBRef);
 			$aInlineArgs = tx_ameosformidable::parseTemplateMethodArgs($aExec[1]["args"]);
 
-			if(t3lib_div::isFirstPartOfStr($sCBRef, "rdt(")) {
+			if(\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sCBRef, "rdt(")) {
 				$bCbRdt = TRUE;
 				$aCbRdtArgs = tx_ameosformidable::parseTemplateMethodArgs($aExec[0]["args"]);
 				if(($oRdt =& $this->rdt($aCbRdtArgs[0])) === FALSE) {
@@ -6798,7 +6814,7 @@ MAYDAYPAGE;
 	 * @param	[type]		$bKey: ...
 	 * @return	[type]		...
 	 */
-	function __getNeighbourInArray($iStart, $aData, $bCycle, $iDirection, $bKey = FALSE) {
+	static function __getNeighbourInArray($iStart, $aData, $bCycle, $iDirection, $bKey = FALSE) {
 
 		if(!empty($aData)) {
 
@@ -6862,7 +6878,7 @@ MAYDAYPAGE;
 	 * @param	[type]		$bKey: ...
 	 * @return	[type]		...
 	 */
-	function _getNextInArray($iStart, $aData, $bCycle = FALSE, $bKey = FALSE) {
+	static function _getNextInArray($iStart, $aData, $bCycle = FALSE, $bKey = FALSE) {
 		return tx_ameosformidable::__getNeighbourInArray(
 			$iStart,
 			$aData,
@@ -6881,7 +6897,7 @@ MAYDAYPAGE;
 	 * @param	[type]		$bKey: ...
 	 * @return	[type]		...
 	 */
-	function _getPrevInArray($iStart, $aData, $bCycle = FALSE, $bKey = FALSE) {
+	static function _getPrevInArray($iStart, $aData, $bCycle = FALSE, $bKey = FALSE) {
 		return tx_ameosformidable::__getNeighbourInArray(
 			$iStart,
 			$aData,
@@ -6987,7 +7003,7 @@ MAYDAYPAGE;
 	 * @param	[type]		$mInfos: ...
 	 * @return	[type]		...
 	 */
-	function _getExtRelPath($mInfos) {
+	static function _getExtRelPath($mInfos) {
 
 		if(!is_array($mInfos)) {
 			// should be object type
@@ -7005,9 +7021,9 @@ MAYDAYPAGE;
 		}
 
 		if($aInfos["BASE"] === TRUE) {
-			return t3lib_extMgm::siteRelPath("ameos_formidable") . "api/base/" . $aInfos["EXTKEY"] . "/";
+			return \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath("ameos_formidable") . "api/base/" . $aInfos["EXTKEY"] . "/";
 		} else {
-			return t3lib_extMgm::siteRelPath($aInfos["EXTKEY"]);
+			return \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath($aInfos["EXTKEY"]);
 		}
 	}
 
@@ -7017,7 +7033,7 @@ MAYDAYPAGE;
 	 * @param	[type]		$mInfos: ...
 	 * @return	[type]		...
 	 */
-	function _getExtPath($mInfos) {
+	static function _getExtPath($mInfos) {
 
 		if(!is_array($mInfos)) {
 			// should be object type
@@ -7037,7 +7053,7 @@ MAYDAYPAGE;
 		if($aInfos["BASE"] === TRUE) {
 			return PATH_formidable . "api/base/" . $aInfos["EXTKEY"] . "/";
 		} else {
-			return t3lib_extmgm::extPath($aInfos["EXTKEY"]);
+			return \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($aInfos["EXTKEY"]);
 		}
 
 		return $extsrcpath;
@@ -7138,7 +7154,7 @@ MAYDAYPAGE;
 			$sStr = $this->conf["misc."]["safelockseed"];
 		}
 
-		return t3lib_div::shortMD5(
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::shortMD5(
 			$GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'] . "||" . $sStr
 		);
 	}
@@ -7160,7 +7176,7 @@ MAYDAYPAGE;
 			$sStr = $this->conf["misc."]["safelockseed"];
 		}
 
-		if(t3lib_div::shortMD5($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'] . "||" . $sStr) === $sLock) {
+		if(\TYPO3\CMS\Core\Utility\GeneralUtility::shortMD5($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'] . "||" . $sStr) === $sLock) {
 			return TRUE;
 		} else {
 			return FALSE;
@@ -7238,13 +7254,13 @@ MAYDAYPAGE;
 			$sMessage .= "<hr />Formidable /meta/debugSendMail: This mail would be sent to " . $sAdresseOld;
 		}
 
-		$aListAdresse = t3lib_div::trimExplode(',', $sAdresse);
+		$aListAdresse = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $sAdresse);
 		$aAdresse = array();
 		foreach($aListAdresse as $sAdresseItem) {
 			$aAdresse[$sAdresseItem] = $sAdresseItem;
 		}		
 
-		$oMail = t3lib_div::makeInstance('t3lib_mail_Message');
+		$oMail = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Mail\\MailMessage');
 		$oMail->setSubject($sSubject)->setBody($sMessage, 'text/html');
 
 		if(trim($sFromAd) !== '') {
@@ -7277,12 +7293,12 @@ MAYDAYPAGE;
 
 		if(is_array($aAttachPaths) && !empty($aAttachPaths)) {
 
-			$oFile = t3lib_div::makeInstance("t3lib_basicFileFunctions");
+			$oFile = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("t3lib_basicFileFunctions");
 
 			reset($aAttachPaths);
 			while(list(, $sPath) = each($aAttachPaths)) {
 
-				$sFilePath = t3lib_div::fixWindowsFilePath(
+				$sFilePath = \TYPO3\CMS\Core\Utility\GeneralUtility::fixWindowsFilePath(
 					$oFile->rmDoubleSlash(
 						$sPath
 					)
@@ -7435,17 +7451,17 @@ MAYDAYPAGE;
 
 		require_once (PATH_t3lib."class.t3lib_page.php");
 		require_once (PATH_t3lib."class.t3lib_tstemplate.php");
-		require_once (PATH_t3lib."class.t3lib_tsparser_ext.php");
+		require_once (PATH_t3lib."class.TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser_ext.php");
 
 
 		global $tmpl;
 
-		$tmpl = t3lib_div::makeInstance("t3lib_tsparser_ext");	// Defined global here!
+		$tmpl = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser_ext");	// Defined global here!
 		$tmpl->tt_track = 0;	// Do not log time-performance information
 		$tmpl->init();
 
 		// Gets the rootLine
-		$sys_page = t3lib_div::makeInstance("t3lib_pageSelect");
+		$sys_page = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("t3lib_pageSelect");
 
 		$tmpl->runThroughTemplates(
 			$sys_page->getRootLine(
@@ -7513,7 +7529,7 @@ MAYDAYPAGE;
 	 */
 	function _makeJsonObj() {
 		if(is_null($this->oJson)) {
-			$this->oJson = t3lib_div::makeInstance("formidable_json");
+			$this->oJson = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("formidable_json");
 			$this->oJson->use = SERVICES_JSON_LOOSE_TYPE;	// *decodes* objects as associative arrays
 		}
 	}
@@ -7741,7 +7757,7 @@ MAYDAYPAGE;
 			$sAfter = "formidable:" . $sAfter;
 		}
 
-		if($this->__getEnvExecMode() === "EID") {
+		if(self::__getEnvExecMode() === "EID") {
 			if($sKey === FALSE) {
 				$this->aHeadersAjax[] = $sData;
 			} else {
@@ -7848,7 +7864,7 @@ MAYDAYPAGE;
 					}
 
 					$script = 'typo3temp/ameos_formidable/js/' . $sFirst . '/javascript_'.$sHash.'.js';
-					$output = $sDesc . "\n" . '<script type="text/javascript" src="'.htmlspecialchars(t3lib_div::getIndpEnv("TYPO3_SITE_URL") . $script).'"></script>' . "\n\n";
+					$output = $sDesc . "\n" . '<script type="text/javascript" src="'.htmlspecialchars(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_SITE_URL") . $script).'"></script>' . "\n\n";
 					break;
 				}
 				case 'css': {
@@ -7861,7 +7877,7 @@ MAYDAYPAGE;
 					}
 
 					$script = 'typo3temp/ameos_formidable/css/' . $sFirst . '/stylesheet_'.$sHash.'.css';
-					$output = $sDesc . "\n" . '<link rel="stylesheet" type="text/css" href="'.htmlspecialchars(t3lib_div::getIndpEnv("TYPO3_SITE_URL") . $script).'" />' . "\n\n";
+					$output = $sDesc . "\n" . '<link rel="stylesheet" type="text/css" href="'.htmlspecialchars(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_SITE_URL") . $script).'" />' . "\n\n";
 					break;
 				}
 			}
@@ -7869,7 +7885,7 @@ MAYDAYPAGE;
 			// Write file:
 			if($script){
 				if(!@is_file(PATH_site.$script)) {
-					t3lib_div::writeFile(PATH_site.$script, $str);
+					\TYPO3\CMS\Core\Utility\GeneralUtility::writeFile(PATH_site.$script, $str);
 				}
 			}
 		}
@@ -7898,13 +7914,13 @@ MAYDAYPAGE;
 	 * @param	[type]		$sPath: ...
 	 * @return	[type]		...
 	 */
-	function toWebPath($sPath) {
+	static function toWebPath($sPath) {
 
-		if(t3lib_div::isFirstPartOfStr(strtolower($sPath), "http://") || t3lib_div::isFirstPartOfStr(strtolower($sPath), "https://")) {
+		if(\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr(strtolower($sPath), "http://") || \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr(strtolower($sPath), "https://")) {
 			return $sPath;
 		}
 
-		return tx_ameosformidable::_removeEndingSlash(t3lib_div::getIndpEnv("TYPO3_SITE_URL")) . "/" . tx_ameosformidable::_removeStartingSlash(tx_ameosformidable::toRelPath($sPath));
+		return tx_ameosformidable::_removeEndingSlash(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_SITE_URL")) . "/" . tx_ameosformidable::_removeStartingSlash(tx_ameosformidable::toRelPath($sPath));
 	}
 
 	/**
@@ -7915,9 +7931,9 @@ MAYDAYPAGE;
 	 * @return	string		$sPath converted to a relative path plus a leading
 	 * 						slash
 	 */
-	function toRelPath($sPath) {
+	static function toRelPath($sPath) {
 		if (substr($sPath, 0, 4) === "EXT:") {
-			$sPath = t3lib_div::getFileAbsFileName($sPath);
+			$sPath = \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($sPath);
 		}
 
 		$sDocRoot = PATH_site;
@@ -7956,7 +7972,7 @@ MAYDAYPAGE;
 	 * @param	[type]		$sPath: ...
 	 * @return	[type]		...
 	 */
-	function _removeStartingSlash($sPath) {
+	static function _removeStartingSlash($sPath) {
 		return ($sPath{0} === "/") ? substr($sPath, 1) : $sPath;
 	}
 
@@ -7966,7 +7982,7 @@ MAYDAYPAGE;
 	 * @param	[type]		$sPath: ...
 	 * @return	[type]		...
 	 */
-	function _removeEndingSlash($sPath) {
+	static function _removeEndingSlash($sPath) {
 		if(substr($sPath, -1) === '/') {
 			$sPath = substr($sPath, 0, -1);
 		}
@@ -7988,7 +8004,7 @@ MAYDAYPAGE;
 	 * @return	[type]		...
 	 */
 	function isAbsServerPath($sPath) {
-		$sServerRoot = t3lib_div::getIndpEnv("TYPO3_DOCUMENT_ROOT");
+		$sServerRoot = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_DOCUMENT_ROOT");
 		return (substr($sPath, 0, strlen($sServerRoot)) === $sServerRoot);
 	}
 
@@ -8125,12 +8141,12 @@ MAYDAYPAGE;
 	 *
 	 * @return	[type]		...
 	 */
-	function __getEnvExecMode() {
+	static function __getEnvExecMode() {
 
 		if(TYPO3_MODE == "BE") {
 			return "BE";
 		} elseif(TYPO3_MODE == "FE") {
-			if(is_null(t3lib_div::_GP('eID'))) {
+			if(is_null(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('eID'))) {
 				return "FE";
 			} else {
 				return "EID";
@@ -8143,105 +8159,35 @@ MAYDAYPAGE;
 	 *
 	 * @return	[type]		...
 	 */
-	function __virtualizeFE($aConfig = FALSE) {
+	function __virtualizeFE($aConfig = FALSE, $pageId = false) {
+        \TYPO3\CMS\Frontend\Utility\EidUtility::initTCA();
 
-		if(
-			array_key_exists("TYPO3_CONF_VARS", $GLOBALS) &&
-			array_key_exists("SC_OPTIONS", $GLOBALS["TYPO3_CONF_VARS"]) &&
-			array_key_exists("t3lib/class.t3lib_userauth.php", $GLOBALS["TYPO3_CONF_VARS"]["SC_OPTIONS"]) &&
-			array_key_exists("logoff_post_processing", $GLOBALS["TYPO3_CONF_VARS"]["SC_OPTIONS"]["t3lib/class.t3lib_userauth.php"]) &&
-			($iPos = array_search("tx_phpmyadmin_utilities->pmaLogOff", $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['logoff_post_processing'])) !== FALSE
-		) {
-			// deactivating the logoff-hook of PMA, that changes the session_name (!) and causes the session to be incorrectly saved at the end of PHP execution
-			unset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['logoff_post_processing'][$iPos]);
-		}
+        $pageId = $pageId ? $pageId : \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('id');
 
-		if (!defined('PATH_tslib')) {
-			if (@is_dir(PATH_site.TYPO3_mainDir.'sysext/cms/tslib/')) {
-				define('PATH_tslib', PATH_site.TYPO3_mainDir.'sysext/cms/tslib/');
-			} elseif (@is_dir(PATH_site.'tslib/')) {
-				define('PATH_tslib', PATH_site.'tslib/');
-			}
-		}
-/*
-		require_once(PATH_tslib.'class.tslib_content.php');
-		require_once(PATH_t3lib.'class.t3lib_timetrack.php');
-		require_once(PATH_tslib.'class.tslib_fe.php');
-		require_once(PATH_t3lib.'class.t3lib_page.php');
-		require_once(PATH_t3lib.'class.t3lib_userauth.php');
-		require_once(PATH_tslib.'class.tslib_feuserauth.php');
-		require_once(PATH_t3lib.'class.t3lib_tstemplate.php');
-		require_once(PATH_t3lib.'class.t3lib_cs.php');
-*/
-		$GLOBALS["TT"] = new t3lib_timeTrack;
-		$GLOBALS["CLIENT"] = t3lib_div::clientInfo();
+        $GLOBALS['TT'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TimeTracker\\TimeTracker');
 
-		// ***********************************
-		// Create $TSFE object (TSFE = TypoScript Front End)
-		// Connecting to database
-		// ***********************************
+        $GLOBALS['TSFE'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Controller\\TypoScriptFrontendController', $GLOBALS['TYPO3_CONF_VARS'], $pageId, 0);
 
-		if(t3lib_div::int_from_ver(TYPO3_version) >= t3lib_div::int_from_ver('4.3.0')) {
-			// makeInstanceClassName is deprecated since TYPO3 4.3.0
+        $GLOBALS['TSFE']->initFEuser();
+        $GLOBALS['TSFE']->set_no_cache();
+        if ($pageId) {
+            $GLOBALS['TSFE']->determineId();
+            $GLOBALS['TSFE']->initTemplate();
+            if($aConfig === FALSE) {
+                $GLOBALS['TSFE']->getConfigArray();
+            } else {                
+                $GLOBALS['TSFE']->config = $aConfig;
+            }
+        }        
+        if (version_compare(TYPO3_version, '8.0', '<')) {
+        	\TYPO3\CMS\Core\Core\Bootstrap::getInstance()->loadCachedTca();
+        }
 
-			$GLOBALS["TSFE"] = t3lib_div::makeInstance(
-				'tslib_fe',
-				$GLOBALS["TYPO3_CONF_VARS"],
-				t3lib_div::_GP('id'),
-				t3lib_div::_GP('type'),
-				t3lib_div::_GP('no_cache'),
-				t3lib_div::_GP('cHash'),
-				t3lib_div::_GP('jumpurl'),
-				t3lib_div::_GP('MP'),
-				t3lib_div::_GP('RDCT')
-			);
-		} else {
-			$temp_TSFEclassName = t3lib_div::makeInstanceClassName('tslib_fe');
-			$GLOBALS["TSFE"] = new $temp_TSFEclassName(
-				$GLOBALS["TYPO3_CONF_VARS"],
-				t3lib_div::_GP('id'),
-				t3lib_div::_GP('type'),
-				t3lib_div::_GP('no_cache'),
-				t3lib_div::_GP('cHash'),
-				t3lib_div::_GP('jumpurl'),
-				t3lib_div::_GP('MP'),
-				t3lib_div::_GP('RDCT')
-			);
-		}
+        $GLOBALS['TSFE']->cObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
+        $GLOBALS['TSFE']->settingLanguage();
+        $GLOBALS['TSFE']->settingLocale();
 
-		//$GLOBALS["TSFE"]->forceTemplateParsing = TRUE;
-
-		//$GLOBALS['TSFE']->absRefPrefix = "/";
-		$GLOBALS["TSFE"]->connectToDB();
-		$GLOBALS["TSFE"]->initFEuser();
-		$GLOBALS["TSFE"]->determineId();
-
-		# catching TYPO34.5+ exceptions (when registering cache handler)
-
-		if($sExecMode !== "BE" && $sExecMode !== "FE") {
-			$GLOBALS["TSFE"]->getCompressedTCarray();
-		}
-
-		$GLOBALS["TSFE"]->initTemplate();
-		$GLOBALS["TSFE"]->getFromCache();
-
-
-		if(!is_array($GLOBALS["TSFE"]->config)) {
-			$GLOBALS["TSFE"]->config = array();
-			$GLOBALS["TSFE"]->forceTemplateParsing = TRUE;
-		}
-
-		if($aConfig === FALSE) {
-			$GLOBALS["TSFE"]->getConfigArray();
-		} else {
-			$GLOBALS["TSFE"]->config = $aConfig;
-		}
-
-		$GLOBALS["TSFE"]->convPOSTCharset();
-		$GLOBALS["TSFE"]->settingLanguage();
-		$GLOBALS["TSFE"]->settingLocale();
-
-		$GLOBALS["TSFE"]->cObj = t3lib_div::makeInstance('tslib_cObj');
+        $GLOBALS['TT'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TimeTracker\\TimeTracker');
 	}
 
 	/**
@@ -8264,7 +8210,7 @@ MAYDAYPAGE;
 
 		$this->cleanBeforeSession();
 
-		if($this->__getEnvExecMode() === "BE") {
+		if(self::__getEnvExecMode() === "BE") {
 			$sLang = $GLOBALS["LANG"]->lang;
 		} else {
 			$sLang = $GLOBALS["TSFE"]->lang;
@@ -8272,7 +8218,7 @@ MAYDAYPAGE;
 
 		$aTempT3Var = $GLOBALS["T3_VAR"];
 		$aTempT3Var["callUserFunction"] = array();
-		if(array_key_exists("tx_realurl", $aTempT3Var["callUserFunction_classPool"])) {
+		if(is_array($aTempT3Var["callUserFunction_classPool"]) && array_key_exists("tx_realurl", $aTempT3Var["callUserFunction_classPool"])) {
 			$aTempT3Var["callUserFunction_classPool"]["tx_realurl"]->pObj = null;
 		}
 
@@ -8300,7 +8246,7 @@ MAYDAYPAGE;
 			$aParentConf = $GLOBALS["TSFE"]->tmpl->setup["plugin."][$sClass . "."];
 
 			$GLOBALS["_SESSION"]["ameos_formidable"]["hibernate"][$this->_getSessionDataHashKey()]["parent"] = array(
-				"classpath" => $this->_removeEndingSlash(t3lib_div::getIndpEnv("TYPO3_DOCUMENT_ROOT")) . "/" . $this->_removeStartingSlash($aParentConf["includeLibs"]),
+				"classpath" => $this->_removeEndingSlash(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_DOCUMENT_ROOT")) . "/" . $this->_removeStartingSlash($aParentConf["includeLibs"]),
 			);
 		}
 	}
@@ -8504,7 +8450,7 @@ MAYDAYPAGE;
 	 * @return	[type]		...
 	 */
 	function &getFromContext($sFormId) {
-		$sExecMode = $this->__getEnvExecMode();
+		$sExecMode = self::__getEnvExecMode();
 		if($sExecMode === "EID") {
 			// ajax context
 			// getting form in session
@@ -8526,18 +8472,18 @@ MAYDAYPAGE;
 	 * @param	[type]		$$aHibernation: ...
 	 * @return	[type]		...
 	 */
-	function &unHibernate(&$aHibernation) {
+	static function &unHibernate(&$aHibernation) {
 		tx_ameosformidable::loadRunningObjects($aHibernation);
 		tx_ameosformidable::loadParent($aHibernation);
 
 		if($aHibernation["be_user"] !== FALSE) {
 			$GLOBALS["BE_USER"] = unserialize($aHibernation["be_user"]);
 		}
-//		require_once(t3lib_extMgm::extPath('sv') . 'class.tx_sv_authbase.php');
+//		require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('sv') . 'class.tx_sv_authbase.php');
 		$GLOBALS["T3_VAR"] = unserialize($aHibernation["t3_var"]);
 
 		$oForm = unserialize($aHibernation["object"]);
-		$oForm->cObj = t3lib_div::makeInstance('tslib_cObj');
+		$oForm->cObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
 		$oForm->conf =& $GLOBALS["_SESSION"]["ameos_formidable"]["tsconf"];
 
 		$oForm->_includeSandBox();	// rebuilding class
@@ -8557,7 +8503,7 @@ MAYDAYPAGE;
 	 * @param	[type]		$$aHibernation: ...
 	 * @return	[type]		...
 	 */
-	function loadRunningObjects(&$aHibernation) {
+	static function loadRunningObjects(&$aHibernation) {
 		$aRObjects =& $aHibernation["runningobjects"];
 		reset($aRObjects);
 		while(list(, $aObject) = each($aRObjects)) {
@@ -8574,7 +8520,7 @@ MAYDAYPAGE;
 	 * @param	[type]		$$aHibernation: ...
 	 * @return	[type]		...
 	 */
-	function loadParent(&$aHibernation) {
+	static function loadParent(&$aHibernation) {
 		if($aHibernation["parent"] !== FALSE) {
 			$sClassPath = $aHibernation["parent"]["classpath"];
 			require_once($sClassPath);
@@ -8944,7 +8890,7 @@ MAYDAYPAGE;
 
 	function reloadCurrentUrl() {
 		$this->sendToPage(
-			t3lib_div::getIndpEnv("TYPO3_REQUEST_URL")
+			\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_REQUEST_URL")
 		);
 	}
 
@@ -9131,7 +9077,7 @@ MAYDAYPAGE;
 
 	function div_autoLogin($iUserId) {
 
-		if($this->__getEnvExecMode() === "FE") {
+		if(self::__getEnvExecMode() === "FE") {
 			$rSql = $GLOBALS["TYPO3_DB"]->exec_SELECTquery(
 				"*",
 				"fe_users",
@@ -9177,7 +9123,7 @@ MAYDAYPAGE;
 	}
 
 	function div_stripSomeTags($sContent, $sTags, $bPreserveInnerHtml = FALSE, $sReplaceEndTagsBy = FALSE) {
-		$aTags = t3lib_div::trimExplode(",", $sTags);
+		$aTags = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $sTags);
 		reset($aTags);
 		while(list(, $sTag) = each($aTags)) {
 			$sContent = tx_ameosformidable::div_stripSomeTag($sContent, $sTag, $bPreserveInnerHtml, $sReplaceEndTagsBy);
@@ -9217,39 +9163,19 @@ MAYDAYPAGE;
 	}
 
 	function div_rteToHtml($sRteHtml, $sTable = "", $sColumn = "") {
-		$pageTSConfig = $GLOBALS['TSFE']->getPagesTSconfig();
 
-		$aConfig = $pageTSConfig['RTE.']['default.']['FE.'];
-		$aSpecConf['rte_transform']['parameters'] = array(
-			"flag" => "rte_enabled",
-			"mode" => "ts"
-		);
-
-		$aDataArray = array(
-			$sColumn => $sRteHtml,
-		);
-
-
-		return \TYPO3\CMS\Backend\Rte\AbstractRte::transformContent(
-			'rte',
-			$sRteHtml,
-			$sTable,
-			$sColumn,
-			$aDataArray,
-			$aSpecConf,
-			$aConfig,
-			'',
-			0
-		);
+        $contentObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
+        $content = $contentObject->parseFunc($sRteHtml, [], '< ' . 'lib.parseFunc_RTE');
+        return $content;		
 	}
 
 	function div_mkdir_deep($destination,$deepDir) {
-		$allParts = t3lib_div::trimExplode('/',$deepDir,1);
+		$allParts = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode('/',$deepDir,1);
 		$root = '';
 		foreach($allParts as $part)	{
 			$root.= $part.'/';
 			if (!is_dir($destination.$root))	{
-				t3lib_div::mkdir($destination.$root);
+				\TYPO3\CMS\Core\Utility\GeneralUtility::mkdir($destination.$root);
 				if (!@is_dir($destination.$root))	{
 					return 'Error: The directory "'.$destination.$root.'" could not be created...';
 				}
@@ -9265,7 +9191,7 @@ MAYDAYPAGE;
 
 		$sCallStack = "";
 		if($bCallStack === TRUE) {
-			$sCallStack = t3lib_div::debug_trail() . "\n";
+			$sCallStack = \TYPO3\CMS\Core\Utility\GeneralUtility::debug_trail() . "\n";
 		}
 
 		error_log($sCallStack . str_repeat("\t", $iPad) . $sMessage . "\n", 3, $this->toServerPath("EXT:ameos_formidable/dev.log.txt"));
@@ -9323,7 +9249,7 @@ MAYDAYPAGE;
 
 	function div_arrayToCsvFile($aData, $sFilePath = FALSE, $sFSep=";", $sLSep="\r\n", $sStringWrap="\"") {
 		if($sFilePath === FALSE) {
-			$sFilePath = t3lib_div::tempnam("csv-" . strftime("%Y.%m.%d-%Hh%Mm%Ss" . "-")) . ".csv";
+			$sFilePath = \TYPO3\CMS\Core\Utility\GeneralUtility::tempnam("csv-" . strftime("%Y.%m.%d-%Hh%Mm%Ss" . "-")) . ".csv";
 		} else {
 			$sFilePath = tx_ameosformidable::toServerPath($sFilePath);
 		}
@@ -9359,8 +9285,8 @@ MAYDAYPAGE;
 
 		$aRes = array();
 
-		if(($sHeaders = t3lib_div::getURL($sUrl, 2)) !== FALSE) {
-			$aHeaders = t3lib_div::trimExplode("\n", $sHeaders);
+		if(($sHeaders = \TYPO3\CMS\Core\Utility\GeneralUtility::getURL($sUrl, 2)) !== FALSE) {
+			$aHeaders = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode("\n", $sHeaders);
 
 			reset($aHeaders);
 			while(list($sKey, $sLine) = each($aHeaders)) {
@@ -9442,7 +9368,7 @@ MAYDAYPAGE;
 	 * This function is used to convert an XML data to a multi-dimensionnal array,
 	 * representing the structure of the data.
 	 *
-	 * This function is based on the Typo3 array2xml function, in t3lib_div. It basically
+	 * This function is based on the Typo3 array2xml function, in \TYPO3\CMS\Core\Utility\GeneralUtility. It basically
 	 * does the same, but has a few more options, like the inclusion of the xml tags arguments
 	 * in the output array. This function also has support for same multiple tag names
 	 * inside the same XML element, which is not the case with the core Typo3 function. In that
@@ -9551,7 +9477,7 @@ MAYDAYPAGE;
 
 
 				// Get the tag name (without prefix if specified)
-				$tagName = ($prefix && t3lib_div::isFirstPartOfStr($val['tag'], $prefix)) ? substr($val['tag'],strlen($prefix)) : $val['tag'];
+				$tagName = ($prefix && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($val['tag'], $prefix)) ? substr($val['tag'],strlen($prefix)) : $val['tag'];
 
 				if($bPlain === FALSE) {
 					$aTagName = explode(
@@ -9630,7 +9556,7 @@ MAYDAYPAGE;
 
 						// Support for tag attributes
 						if ($keepAttribs && $val['attributes']) {
-//							echo t3lib_div::view_array($val['attributes'], "attributes");
+//							echo \TYPO3\CMS\Core\Utility\GeneralUtility::view_array($val['attributes'], "attributes");
 							$xml = $val['attributes'];
 						}
 
@@ -9821,7 +9747,7 @@ MAYDAYPAGE;
 			return;
 		}
 
-		$aFiles = t3lib_div::getAllFilesAndFoldersInPath(
+		$aFiles = \TYPO3\CMS\Core\Utility\GeneralUtility::getAllFilesAndFoldersInPath(
 			array(),
 			$sPath,
 			'',	// $extList
@@ -9897,14 +9823,14 @@ MAYDAYPAGE;
 		if(isset($aGet['fhash'])) {
 			return $aGet['fhash'];
 		} else {
-			return t3lib_div::shortMD5(time());
+			return \TYPO3\CMS\Core\Utility\GeneralUtility::shortMD5(time());
 		}
 	}
 
 
 	// declare*() methods below are meant to smoothen transition between 0.7.x and 1.0/2.0+
 	function declareDataHandler() {
-		if(TYPO3_MODE === "BE" && t3lib_extMgm::isLoaded("seminars")) {
+		if(TYPO3_MODE === "BE" && \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded("seminars")) {
 			echo "<br /><br /><b>Warning</b>: you are using Formidable version <i>" . $GLOBALS["EM_CONF"]["ameos_formidable"]["version"] . "</i> with Seminars, requiring version 0.7.0.<br />";
 		}
 	}

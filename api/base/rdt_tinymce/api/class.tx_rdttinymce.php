@@ -98,7 +98,9 @@ class tx_rdttinymce extends formidable_mainrenderlet {
 		);
 		
 		if(is_array($aUserConfig) && !empty($aUserConfig)) {
-			$aConfig = t3lib_div::array_merge_recursive_overrule($aUserConfig, $aConfig);
+            $aTempConfig = $aUserConfig;
+			\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($aTempConfig, $aConfig);
+            $aConfig = $aTempConfig;
 		}
 
 		if(!array_key_exists("theme", $aConfig)) {
@@ -112,7 +114,7 @@ class tx_rdttinymce extends formidable_mainrenderlet {
 		if(is_array($aAddConfig = $this->_navConf("/addconfig")) && tx_ameosformidable::isRunneable($aAddConfig)) {
 			$aAddConfig = $this->callRunneable($aAddConfig);
 			if(is_array($aAddConfig) && !empty($aAddConfig)) {
-				$aConfig = t3lib_div::array_merge_recursive_overrule($aConfig, $aAddConfig);
+				\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($aConfig, $aAddConfig);
 			}
 		}
 

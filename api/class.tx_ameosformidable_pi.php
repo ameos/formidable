@@ -1,8 +1,8 @@
 <?php
 	
-	require_once(PATH_tslib.'class.tslib_pibase.php');
+	require_once(PATH_tslib.'class.\TYPO3\CMS\Frontend\Plugin\AbstractPlugin.php');
 
-	class tx_ameosformidable_pi extends tslib_pibase {
+	class tx_ameosformidable_pi extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 		
 		var $extKey = 'ameos_formidable';
 		var $oForm = FALSE;
@@ -61,7 +61,7 @@
 			// init+render
 
 			require_once(PATH_formidable . "api/class.tx_ameosformidable.php");
-			$this->oForm = t3lib_div::makeInstance("tx_ameosformidable");
+			$this->oForm = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("tx_ameosformidable");
 			if($this->sXmlPath === FALSE) {
 				$this->oForm->initFromTs(
 					$this,

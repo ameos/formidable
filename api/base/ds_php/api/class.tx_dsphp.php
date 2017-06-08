@@ -19,7 +19,7 @@ class tx_dsphp extends formidable_maindatasource {
 
 	function initDataSet($sKey) {
 		$sSignature = FALSE;
-		$oDataSet = t3lib_div::makeInstance("formidable_maindataset");
+		$oDataSet = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("formidable_maindataset");
 
 		if($sKey === "new") {
 			// new record to create

@@ -17,7 +17,7 @@ class tx_vafile extends formidable_mainvalidator {
 
 		$bError = FALSE;
 
-		$this->oFileFunc = t3lib_div::makeInstance("t3lib_basicFileFunctions");
+		$this->oFileFunc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("t3lib_basicFileFunctions");
 
 		if($oRdt->_getType() === "FILE") {	// renderlet:FILE
 			$sFileName = strtolower($this->oFileFunc->cleanFileName($sFileName));
@@ -26,7 +26,7 @@ class tx_vafile extends formidable_mainvalidator {
 
 			if($sFileName !== "") {
 				if($oRdt->isMultiple()) {
-					$aFileList = t3lib_div::trimExplode(",", $sFileName);
+					$aFileList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $sFileName);
 					$sFileName = array_pop($aFileList);	// last one, and remove from list; will be added later if valid
 				}
 			}
@@ -48,14 +48,14 @@ class tx_vafile extends formidable_mainvalidator {
 			*
 			***********************************************************************/
 
-			if($sKey{0} === "e" && t3lib_div::isFirstPartOfStr($sKey, "extension")) {
+			if($sKey{0} === "e" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "extension")) {
 
 				$sFileExts = $this->_navConf("/" . $sKey . "/value");
 				if(tx_ameosformidable::isRunneable($sFileExts)) {
 					$sFileExts = $this->callRunneable($sFileExts);
 				}
 
-				$aExtensions = t3lib_div::trimExplode(
+				$aExtensions = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(
 					",",
 					$sFileExts
 				);
@@ -83,7 +83,7 @@ class tx_vafile extends formidable_mainvalidator {
 			*
 			***********************************************************************/
 
-			if($sKey{0} === "f" && t3lib_div::isFirstPartOfStr($sKey, "filesize") && t3lib_div::isFirstPartOfStr($sKey, "filesizekb") && t3lib_div::isFirstPartOfStr($sKey, "filesizemb")) {
+			if($sKey{0} === "f" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "filesize") && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "filesizekb") && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "filesizemb")) {
 				$mSize = $this->_navConf("/" . $sKey . "/value");
 
 				if(tx_ameosformidable::isRunneable($mSize)) {
@@ -112,7 +112,7 @@ class tx_vafile extends formidable_mainvalidator {
 			*
 			***********************************************************************/
 
-			if($sKey{0} === "f" && t3lib_div::isFirstPartOfStr($sKey, "filesizekb")) {
+			if($sKey{0} === "f" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "filesizekb")) {
 				$mSize = $this->_navConf("/" . $sKey . "/value");
 
 				if(tx_ameosformidable::isRunneable($mSize)) {
@@ -141,7 +141,7 @@ class tx_vafile extends formidable_mainvalidator {
 			*
 			***********************************************************************/
 
-			if($sKey{0} === "f" && t3lib_div::isFirstPartOfStr($sKey, "filesizemb")) {
+			if($sKey{0} === "f" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "filesizemb")) {
 				$mSize = $this->_navConf("/" . $sKey . "/value");
 
 				if(tx_ameosformidable::isRunneable($mSize)) {

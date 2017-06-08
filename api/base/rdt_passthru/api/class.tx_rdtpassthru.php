@@ -16,7 +16,7 @@ class tx_rdtpassthru extends formidable_mainrenderlet {
 		return TRUE;
 	}
 
-	function _sqlSearchClause($value, $fieldprefix = "") {
+	function _sqlSearchClause($sValue, $sFieldPrefix = '', $sFieldName = '', $bRec = true) {
 		return $fieldprefix . $this->_navConf("/name") . " = '" . $GLOBALS['TYPO3_DB']->quoteStr($value, '') . "'";
 	}
 
