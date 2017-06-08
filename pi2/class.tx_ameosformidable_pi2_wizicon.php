@@ -46,7 +46,7 @@ class ameos_formidable_pi2_wizicon {
 						$LL = $this->includeLocalLang();
 
 						$wizardItems['plugins_ameos_formidable_pi2'] = array(
-							'icon'=>t3lib_extMgm::extRelPath('ameos_formidable').'pi2/ce_wiz.gif',
+							'icon'=>\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('ameos_formidable').'pi2/ce_wiz.gif',
 							'title'=>'FORMIDABLE_INT cObj (not cached)',
 							'description'=>'Formidable standard plugins to invoke and run your XML application (not cached)',
 							'params'=>'&defVals[tt_content][CType]=list&defVals[tt_content][list_type]=ameos_formidable_pi2'
@@ -61,9 +61,9 @@ class ameos_formidable_pi2_wizicon {
 					 * @return	The array with language labels
 					 */
 					function includeLocalLang()	{
-						$llFile = t3lib_extMgm::extPath('ameos_formidable').'locallang.xml';
-						if(function_exists("t3lib_div::readLLXMLfile")) {
-							$LOCAL_LANG = t3lib_div::readLLXMLfile($llFile, $GLOBALS['LANG']->lang);
+						$llFile = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('ameos_formidable').'locallang.xml';
+						if(function_exists("\TYPO3\CMS\Core\Utility\GeneralUtility::readLLXMLfile")) {
+							$LOCAL_LANG = \TYPO3\CMS\Core\Utility\GeneralUtility::readLLXMLfile($llFile, $GLOBALS['LANG']->lang);
 						}
 						
 						return $LOCAL_LANG;

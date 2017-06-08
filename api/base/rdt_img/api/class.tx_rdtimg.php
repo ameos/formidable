@@ -58,10 +58,10 @@ class tx_rdtimg extends formidable_mainrenderlet {
 				$sAbsWebPath = $sPath;
 
 				$aInfosPath = parse_url($sAbsWebPath);
-				$aInfosFile = t3lib_div::split_fileref($sAbsWebPath);
+				$aInfosFile = \TYPO3\CMS\Core\Utility\GeneralUtility::split_fileref($sAbsWebPath);
 				#debug($aInfosPath);
 				#debug($aInfosFile);
-				if(strtolower($aInfosPath["host"]) !== strtolower(t3lib_div::getIndpEnv("TYPO3_HOST_ONLY"))) {
+				if(strtolower($aInfosPath["host"]) !== strtolower(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_HOST_ONLY"))) {
 
 					// it's an external image
 
@@ -91,9 +91,9 @@ class tx_rdtimg extends formidable_mainrenderlet {
 					$sTempFilePath = PATH_site . "typo3temp/" . $sTempFileName;
 
 					if(!file_exists($sTempFilePath)) {
-						t3lib_div::writeFileToTypo3tempDir(
+						\TYPO3\CMS\Core\Utility\GeneralUtility::writeFileToTypo3tempDir(
 							$sTempFilePath,
-							t3lib_div::getUrl($sAbsWebPath)
+							\TYPO3\CMS\Core\Utility\GeneralUtility::getUrl($sAbsWebPath)
 						);
 					}
 
@@ -277,11 +277,11 @@ class tx_rdtimg extends formidable_mainrenderlet {
 			$sPath = $this->callRunneable($sPath);
 		}
 
-		if(t3lib_div::isFirstPartOfStr($sPath, "EXT:")) {
+		if(\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sPath, "EXT:")) {
 
 			$sPath = $this->oForm->_removeStartingSlash(
 				$this->oForm->toRelPath(
-					t3lib_div::getFileAbsFileName($sPath)
+					\TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($sPath)
 				)
 			);
 		}
@@ -309,9 +309,9 @@ class tx_rdtimg extends formidable_mainrenderlet {
 		return $this->oForm->toServerPath($sPath);
 	}
 
-	function _getAddInputParamsArray() {
+	function _getAddInputParamsArray($aAdditional = array()) {
 
-		$aAddParams = parent::_getAddInputParamsArray();
+		$aAddParams = parent::_getAddInputParamsArray($aAdditional);
 
 		if(($mUseMap = $this->_navConf("/usemap")) !== FALSE) {
 

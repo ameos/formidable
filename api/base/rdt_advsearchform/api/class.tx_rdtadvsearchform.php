@@ -135,7 +135,7 @@ class tx_rdtadvsearchform extends formidable_mainrenderlet {
 		$aTemplate = $this->getFieldsTemplate();
 		$aAltRows = array();
 		$aRowsHtml = array();
-		$sRowsPart = t3lib_parsehtml::getSubpart($aTemplate["html"], "###ROWS###");
+		$sRowsPart = \TYPO3\CMS\Core\Html\HtmlParser::getSubpart($aTemplate["html"], "###ROWS###");
 		
 		if($aTemplate["default"] === TRUE) {
 			$sAltList = "###ROW1###, ###ROW2###";
@@ -146,11 +146,11 @@ class tx_rdtadvsearchform extends formidable_mainrenderlet {
 				requires /template/alternaterows to be properly set. Please check your XML configuration");
 		}
 
-		$aAltList = t3lib_div::trimExplode(",", $sAltList);
+		$aAltList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $sAltList);
 		if(sizeof($aAltList) > 0) {
 			reset($aAltList);
 			while(list(, $sAltSubpart) = each($aAltList)) {
-				$aAltRows[] = t3lib_parsehtml::getSubpart($sRowsPart, $sAltSubpart);
+				$aAltRows[] = \TYPO3\CMS\Core\Html\HtmlParser::getSubpart($sRowsPart, $sAltSubpart);
 			}
 
 			$iNbAlt = sizeOf($aAltRows);
@@ -178,7 +178,7 @@ class tx_rdtadvsearchform extends formidable_mainrenderlet {
 			$iRowNum++;
 		}
 
-		$aHtmlBag["fields"] = t3lib_parsehtml::substituteSubpart(
+		$aHtmlBag["fields"] = \TYPO3\CMS\Core\Html\HtmlParser::substituteSubpart(
 			$aTemplate["html"],
 			"###ROWS###",
 			implode("", $aHtmlBag['fields.']),
@@ -228,8 +228,8 @@ class tx_rdtadvsearchform extends formidable_mainrenderlet {
 		
 		if(($aTemplate = $this->_navConf("/template")) === FALSE) {
 			$aRes['default'] = TRUE;
-			$aRes['html'] = t3lib_parsehtml::getSubpart(
-				t3lib_div::getUrl($this->sExtPath . "res/html/default-template.html"),
+			$aRes['html'] = \TYPO3\CMS\Core\Html\HtmlParser::getSubpart(
+				\TYPO3\CMS\Core\Utility\GeneralUtility::getUrl($this->sExtPath . "res/html/default-template.html"),
 				'###DEFAULT_ADVSEARCHFORM###'
 			);
 		} else {
@@ -248,8 +248,8 @@ class tx_rdtadvsearchform extends formidable_mainrenderlet {
 		
 		if(($aTemplate = $this->_navConf("/fields/template")) === FALSE) {
 			$aRes['default'] = TRUE;
-			$aRes['html'] = t3lib_parsehtml::getSubpart(
-				t3lib_div::getUrl($this->sExtPath . "res/html/default-template.html"),
+			$aRes['html'] = \TYPO3\CMS\Core\Html\HtmlParser::getSubpart(
+				\TYPO3\CMS\Core\Utility\GeneralUtility::getUrl($this->sExtPath . "res/html/default-template.html"),
 				'###DEFAULT_ADVSEARCHFORM_FIELDS###'
 			);
 		} else {
@@ -290,8 +290,8 @@ class tx_rdtadvsearchform extends formidable_mainrenderlet {
 	
 		if(file_exists($aTemplate["path"])) {
 			if(is_readable($aTemplate["path"])) {
-				$aRes["html"] = t3lib_parsehtml::getSubpart(
-					t3lib_div::getUrl($aTemplate["path"]),
+				$aRes["html"] = \TYPO3\CMS\Core\Html\HtmlParser::getSubpart(
+					\TYPO3\CMS\Core\Utility\GeneralUtility::getUrl($aTemplate["path"]),
 					$aTemplate["subpart"]
 				);
 
@@ -379,7 +379,7 @@ class tx_rdtadvsearchform extends formidable_mainrenderlet {
 		}
 		$aFields = array();
 		if(($sTable = $this->_navConf('/fields/table')) !== FALSE) {		
-			t3lib_div::loadTCA($sTable);
+			\TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA($sTable);
 			$aTableFields = $GLOBALS['TYPO3_DB']->admin_get_fields($sTable);
 			foreach($aTableFields as $aTableField) {				
 				$aFields[$aTableField['Field']] = array(
@@ -477,7 +477,7 @@ class tx_rdtadvsearchform extends formidable_mainrenderlet {
 
 			} else {
 				
-				$aPost = t3lib_div::_POST($this->oForm->formid);
+				$aPost = \TYPO3\CMS\Core\Utility\GeneralUtility::_POST($this->oForm->formid);
 				$aSearformPost = $aPost;
 				$aSplitName = explode('.', $this->getAbsName());
 				foreach($aSplitName as $sSplitName) {
@@ -1402,7 +1402,7 @@ INITSCRIPT;
 	}
 	
 	function getNewindex() {
-		return t3lib_div::shortMD5(microtime() . '-' . mt_rand(), 4);
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::shortMD5(microtime() . '-' . mt_rand(), 4);
 	}
 	
 	function getAutoLabelForField($sField, $sTable) {
@@ -1535,7 +1535,7 @@ INITSCRIPT;
 			$aSearch = unserialize($sSearch);
 
 			foreach($aSearch as $sName => $aValue) {
-				$sKey = t3lib_div::shortMD5(serialize($aValue));
+				$sKey = \TYPO3\CMS\Core\Utility\GeneralUtility::shortMD5(serialize($aValue));
 				$this->aSaveSearch[$sKey]['name'] = $sName;
 				$this->aSaveSearch[$sKey]['value'] = $aValue;
 			}
@@ -1564,7 +1564,7 @@ INITSCRIPT;
 			$aSearch = unserialize($aCurrent[$aConfig['field']]);
 			if(is_array($aSearch[$this->oForm->formid])) {
 				foreach($aSearch[$this->oForm->formid] as $sName => $aValue) {
-					$sKey = t3lib_div::shortMD5(serialize($aValue));
+					$sKey = \TYPO3\CMS\Core\Utility\GeneralUtility::shortMD5(serialize($aValue));
 					$this->aSaveSearch[$sKey]['name'] = $sName;
 					$this->aSaveSearch[$sKey]['value'] = $aValue;
 				}

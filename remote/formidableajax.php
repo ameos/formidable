@@ -5,7 +5,7 @@
 // Exit, if script is called directly (must be included via eID in index_ts.php)
 if (!defined ('PATH_typo3conf')) 	die ('Could not access this script directly!');
 
-if(($sGetPhpSessId = trim(t3lib_div::_GP("phpsessid"))) !== "") {
+if(($sGetPhpSessId = trim(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP("phpsessid"))) !== "") {
 	session_id($sGetPhpSessId);
 	session_start();
 } elseif(session_id() === "") {
@@ -24,27 +24,27 @@ class formidableajax {
 	function init() {
 
 		
-		$value = t3lib_div::_GP("value");
+		$value = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP("value");
 		$value = stripslashes(str_replace('\\n', '###FORMIDABLECR###', $value));
 		$value = str_replace("###FORMIDABLECR###", '\\n', $value);
 
-		$context = t3lib_div::_GP("context");
+		$context = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP("context");
 		$context = stripslashes(str_replace('\\n', '###FORMIDABLECR###', $context));
 		$context = str_replace("###FORMIDABLECR###", '\\n', $context);
 		
 		$this->aRequest = array(
-			"safelock"		=> t3lib_div::_GP("safelock"),
-			"sessionhash"	=> t3lib_div::_GP("sessionhash"),
-			"object"		=> t3lib_div::_GP("object"),
-			"servicekey"	=> t3lib_div::_GP("servicekey"),
-			"eventid"		=> t3lib_div::_GP("eventid"),
-			"serviceid"		=> t3lib_div::_GP("serviceid"),
+			"safelock"		=> \TYPO3\CMS\Core\Utility\GeneralUtility::_GP("safelock"),
+			"sessionhash"	=> \TYPO3\CMS\Core\Utility\GeneralUtility::_GP("sessionhash"),
+			"object"		=> \TYPO3\CMS\Core\Utility\GeneralUtility::_GP("object"),
+			"servicekey"	=> \TYPO3\CMS\Core\Utility\GeneralUtility::_GP("servicekey"),
+			"eventid"		=> \TYPO3\CMS\Core\Utility\GeneralUtility::_GP("eventid"),
+			"serviceid"		=> \TYPO3\CMS\Core\Utility\GeneralUtility::_GP("serviceid"),
 			"value"			=> $value,
 			"context"		=> $context,
-			"formid"		=> t3lib_div::_GP("formid"),
-			"thrower"		=> t3lib_div::_GP("thrower"),
-			"arguments"		=> t3lib_div::_GP("arguments"),
-			"trueargs"		=> t3lib_div::_GP("trueargs"),
+			"formid"		=> \TYPO3\CMS\Core\Utility\GeneralUtility::_GP("formid"),
+			"thrower"		=> \TYPO3\CMS\Core\Utility\GeneralUtility::_GP("thrower"),
+			"arguments"		=> \TYPO3\CMS\Core\Utility\GeneralUtility::_GP("arguments"),
+			"trueargs"		=> \TYPO3\CMS\Core\Utility\GeneralUtility::_GP("trueargs"),
 		);
 		
 
@@ -60,10 +60,6 @@ class formidableajax {
 							// valid session data
 							// proceed then
 
-							tslib_eidtools::connectDB();
-							if(method_exists('tslib_eidtools', 'initTCA')) {
-								tslib_eidtools::initTCA();
-							}
 
 							$this->aConf =& $GLOBALS
 												["TYPO3_CONF_VARS"]
@@ -91,11 +87,12 @@ class formidableajax {
 							require_once(PATH_formidable . "api/class.tx_ameosformidable.php");
 
 							$this->oForm =& tx_ameosformidable::unHibernate($this->aHibernation);
-							$this->oForm->cObj = t3lib_div::makeInstance('\\TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
+							$this->oForm->cObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
 
 							if($this->aConf["virtualizeFE"]) {
 								$this->oForm->__virtualizeFE(
-									$this->aHibernation["tsfe_config"]
+									$this->aHibernation["tsfe_config"],
+                                    $this->aHibernation["pageid"]
 								);
 								$GLOBALS["TSFE"]->config = $this->aHibernation["tsfe_config"];
 								$GLOBALS["TSFE"]->tmpl->setup["config."]["sys_language_uid"] = $this->aHibernation["sys_language_uid"];
@@ -179,7 +176,7 @@ class formidableajax {
 
 
 	function _initFeUser() {
-		tslib_eidtools::initFeUser();
+		
 	}
 	
 	function handleRequest() {
@@ -239,7 +236,7 @@ class formidableajax {
 
 		global $BE_USER, $_COOKIE, $TYPO3_CONF_VARS;
 
-		$temp_TSFEclassName = t3lib_div::makeInstanceClassName('tslib_fe');
+		$temp_TSFEclassName = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstanceClassName('tslib_fe');
 		$TSFE = new $temp_TSFEclassName($TYPO3_CONF_VARS,0,0);
 		$TSFE->connectToDB();
 
@@ -254,7 +251,7 @@ class formidableajax {
 				require_once (PATH_t3lib.'class.t3lib_tsfebeuserauth.php');
 
 					// the value this->formfield_status is set to empty in order to disable login-attempts to the backend account through this script
-				$BE_USER = t3lib_div::makeInstance('t3lib_tsfeBeUserAuth');	// New backend user object
+				$BE_USER = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_tsfeBeUserAuth');	// New backend user object
 				$BE_USER->OS = TYPO3_OS;
 				$BE_USER->lockIP = $TYPO3_CONF_VARS['BE']['lockIP'];
 				$BE_USER->start();			// Object is initialized
@@ -266,8 +263,8 @@ class formidableajax {
 				if ($BE_USER->checkLockToIP() && $BE_USER->checkBackendAccessSettingsFromInitPhp())	{
 					$BE_USER->extInitFeAdmin();
 					if ($BE_USER->extAdmEnabled)	{
-						require_once(t3lib_extMgm::extPath('lang').'lang.php');
-						$LANG = t3lib_div::makeInstance('language');
+						require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('lang').'lang.php');
+						$LANG = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('language');
 						$LANG->init($BE_USER->uc['lang']);
 
 						$BE_USER->extSaveFeAdminConfig();
@@ -276,16 +273,16 @@ class formidableajax {
 						$TSFE->displayEditIcons = $BE_USER->extGetFeAdminValue('edit', 'displayIcons');
 						$TSFE->displayFieldEditIcons = $BE_USER->extGetFeAdminValue('edit', 'displayFieldIcons');
 
-						if (t3lib_div::_GP('ADMCMD_editIcons'))	{
+						if (\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('ADMCMD_editIcons'))	{
 							$TSFE->displayFieldEditIcons=1;
 							$BE_USER->uc['TSFE_adminConfig']['edit_editNoPopup']=1;
 						}
-						if (t3lib_div::_GP('ADMCMD_simUser'))	{
-							$BE_USER->uc['TSFE_adminConfig']['preview_simulateUserGroup']=intval(t3lib_div::_GP('ADMCMD_simUser'));
+						if (\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('ADMCMD_simUser'))	{
+							$BE_USER->uc['TSFE_adminConfig']['preview_simulateUserGroup']=intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('ADMCMD_simUser'));
 							$BE_USER->ext_forcePreview=1;
 						}
-						if (t3lib_div::_GP('ADMCMD_simTime'))	{
-							$BE_USER->uc['TSFE_adminConfig']['preview_simulateDate']=intval(t3lib_div::_GP('ADMCMD_simTime'));
+						if (\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('ADMCMD_simTime'))	{
+							$BE_USER->uc['TSFE_adminConfig']['preview_simulateDate']=intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('ADMCMD_simTime'));
 							$BE_USER->ext_forcePreview=1;
 						}
 
@@ -293,14 +290,14 @@ class formidableajax {
 						if (($BE_USER->extAdmModuleEnabled('edit') && $BE_USER->extIsAdmMenuOpen('edit')) || $TSFE->displayEditIcons == 1)	{
 							$TSFE->includeTCA();
 							if ($BE_USER->extIsEditAction())	{
-								require_once (PATH_t3lib.'class.t3lib_tcemain.php');
+								//require_once (PATH_t3lib.'class.t3lib_tcemain.php');
 								$BE_USER->extEditAction();
 							}
 							if ($BE_USER->extIsFormShown())	{
-								require_once(PATH_t3lib.'class.t3lib_tceforms.php');
-								require_once(PATH_t3lib.'class.t3lib_iconworks.php');
-								require_once(PATH_t3lib.'class.t3lib_loaddbgroup.php');
-								require_once(PATH_t3lib.'class.t3lib_transferdata.php');
+								//require_once(PATH_t3lib.'class.t3lib_tceforms.php');
+								//require_once(PATH_t3lib.'class.t3lib_iconworks.php');
+								//require_once(PATH_t3lib.'class.t3lib_loaddbgroup.php');
+								//require_once(PATH_t3lib.'class.t3lib_transferdata.php');
 							}
 						}
 
@@ -320,7 +317,7 @@ class formidableajax {
 			require_once (PATH_t3lib.'class.t3lib_tsfebeuserauth.php');
 
 				// the value this->formfield_status is set to empty in order to disable login-attempts to the backend account through this script
-			$BE_USER = t3lib_div::makeInstance('t3lib_tsfeBeUserAuth');	// New backend user object
+			$BE_USER = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_tsfeBeUserAuth');	// New backend user object
 			$BE_USER->userTS_dontGetCached = 1;
 			$BE_USER->OS = TYPO3_OS;
 			$BE_USER->setBeUserByUid($TSFE->ADMCMD_preview_BEUSER_uid);

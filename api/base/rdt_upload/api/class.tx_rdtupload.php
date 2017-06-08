@@ -60,7 +60,7 @@ class tx_rdtupload extends formidable_mainrenderlet {
 		$sInput = '<input type="file" name="' . $this->_getElementHtmlName() . '" id="' . $this->_getElementHtmlId() . '" ' . $this->_getAddInputParams() . ' />';
 		$sInput .= '<input type="hidden" name="' . $this->_getElementHtmlName() . '[backup]" value="' . $this->getValueForHtml($sValue) . '" />';
 
-		$aValues = t3lib_div::trimExplode(",", $this->getValueForHtml($sValue));
+		$aValues = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $this->getValueForHtml($sValue));
 
 		reset($aValues);
 		$sLinks = array();
@@ -132,7 +132,7 @@ class tx_rdtupload extends formidable_mainrenderlet {
 		if(($sTargetFile = $this->getTargetFile()) !== FALSE) {
 			
 			if($this->defaultFalse("/data/cleanfilename") || $this->defaultFalse("/cleanfilename")) {
-				$sTargetDir = t3lib_div::dirname($sTargetFile);
+				$sTargetDir = \TYPO3\CMS\Core\Utility\GeneralUtility::dirname($sTargetFile);
 				$sName = basename($sTargetFile);
 				$sName = $this->strtolower(
 					$this->cleanFileName($sName)
@@ -160,7 +160,7 @@ class tx_rdtupload extends formidable_mainrenderlet {
 	}
 
 	function cleanFileName($sName) {
-		$oFileTool = t3lib_div::makeInstance("t3lib_basicFileFunctions");
+		$oFileTool = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("t3lib_basicFileFunctions");
 		$sName = $oFileTool->cleanFileName($sName);
 		$fileName = str_replace(' ', '_', $fileName);
 		$sName = str_replace(
@@ -237,10 +237,10 @@ class tx_rdtupload extends formidable_mainrenderlet {
 
 			} else {			
 				// a file has just been uploaded
-				$oFileTool = t3lib_div::makeInstance("t3lib_basicFileFunctions");
+				$oFileTool = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("t3lib_basicFileFunctions");
 
 				if(($sTargetFile = $this->getTargetFile()) !== FALSE) {
-					$sTargetDir = t3lib_div::dirname($sTargetFile);
+					$sTargetDir = \TYPO3\CMS\Core\Utility\GeneralUtility::dirname($sTargetFile);
 					$sName = basename($sTargetFile);
 					if($this->defaultFalse("/data/cleanfilename") || $this->defaultFalse("/cleanfilename")) {
 						$sName = $this->strtolower(
@@ -318,7 +318,7 @@ class tx_rdtupload extends formidable_mainrenderlet {
 
 						if($sCurrent !== "") {
 
-							$aCurrent = t3lib_div::trimExplode(",", $sCurrent);
+							$aCurrent = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $sCurrent);
 							if(!in_array($sCurFile, $aCurrent)) {
 								$aCurrent[] = $sCurFile;
 							}
@@ -443,7 +443,7 @@ class tx_rdtupload extends formidable_mainrenderlet {
 	}
 
 	function deleteFile($sFile) {
-		$aValues = t3lib_div::trimExplode(",", $this->getValue());
+		$aValues = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $this->getValue());
 		unset($aValues[array_search($sFile, $aValues)]);
 		@unlink($this->getFullServerPath($sFile));
 		$this->setValue(implode(",", $aValues));
@@ -453,7 +453,7 @@ class tx_rdtupload extends formidable_mainrenderlet {
 
 		if(is_null($this->bUseDam)) {
 			if($this->oForm->defaultFalse("/dam/use", $this->aElement) === TRUE) {
-				if(!t3lib_extmgm::isLoaded("dam")) {
+				if(!\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded("dam")) {
 					$this->oForm->mayday("renderlet:UPLOAD[name=" . $this->_getName() . "], can't connect to <b>DAM</b>: <b>EXT:dam is not loaded</b>.");
 				}
 
@@ -501,7 +501,7 @@ class tx_rdtupload extends formidable_mainrenderlet {
 						// simulating user
 
 					unset($BE_USER);
-					$BE_USER = t3lib_div::makeInstance('t3lib_beUserAuth');
+					$BE_USER = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_beUserAuth');
 					$BE_USER->OS = TYPO3_OS;
 					$BE_USER->setBeUserByUid($aRs["uid"]);
 					$BE_USER->fetchGroupData();
@@ -515,7 +515,7 @@ class tx_rdtupload extends formidable_mainrenderlet {
 			}
 
 			if($this->isMultiple()) {
-				$aFiles = t3lib_div::trimExplode(",", $this->getValue());
+				$aFiles = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $this->getValue());
 			} else {
 				$aFiles = array($this->getValue());
 			}
@@ -621,7 +621,7 @@ class tx_rdtupload extends formidable_mainrenderlet {
 
 					if(!is_array($mCategories)) {
 						if(trim($mCategories) !== "") {
-							$aCategories = t3lib_div::trimExplode(",", trim($mCategories));
+							$aCategories = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", trim($mCategories));
 						}
 					} else {
 						$aCategories = $mCategories;
@@ -678,7 +678,7 @@ class tx_rdtupload extends formidable_mainrenderlet {
 						// simulating user
 
 					unset($BE_USER);
-					$BE_USER = t3lib_div::makeInstance('t3lib_beUserAuth');
+					$BE_USER = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_beUserAuth');
 					$BE_USER->OS = TYPO3_OS;
 					$BE_USER->setBeUserByUid($aRs["uid"]);
 					$BE_USER->fetchGroupData();
@@ -725,7 +725,7 @@ class tx_rdtupload extends formidable_mainrenderlet {
 			return parent::getValue();
 		}
 
-		$aMValues = t3lib_div::trimExplode(',', parent::getValue());
+		$aMValues = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', parent::getValue());
 		$aValues = array();
 		foreach($aMValues as $mValue) {
 			$oMedia = tx_dam::media_getByUid($mValue);
@@ -741,7 +741,7 @@ class tx_rdtupload extends formidable_mainrenderlet {
 */
 
 	public function formatValue($mValue) {
-		if(t3lib_extmgm::isLoaded("dam")) {
+		if(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded("dam")) {
 			if(is_numeric($mValue)) {
 				$oMedia = tx_dam::media_getByUid($mValue);
 				return $oMedia->meta['file_name'];

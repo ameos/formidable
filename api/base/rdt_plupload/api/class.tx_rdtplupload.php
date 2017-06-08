@@ -83,7 +83,7 @@ class tx_rdtplupload extends formidable_mainrenderlet {
 		$sSafeLock = $this->_getSessionDataHashKey();
 		$sThrower = $sHtmlId;
 
-		$sUploadUrl = $this->oForm->_removeEndingSlash(t3lib_div::getIndpEnv("TYPO3_SITE_URL")) . "/index.php?eID=tx_ameosformidable&object=" . $sObject . "&servicekey=" . $sServiceKey . "&formid=" . $sFormId . "&sessionhash=" . $sSafeLock . "&safelock=" . $sSafeLock . "&thrower=" . $sThrower;
+		$sUploadUrl = $this->oForm->_removeEndingSlash(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_SITE_URL")) . "/index.php?eID=tx_ameosformidable&object=" . $sObject . "&servicekey=" . $sServiceKey . "&formid=" . $sFormId . "&sessionhash=" . $sSafeLock . "&safelock=" . $sSafeLock . "&thrower=" . $sThrower;
 		$sUploadUrl .= "&phpsessid=" . session_id();
 
 		$GLOBALS["_SESSION"]["ameos_formidable"]["ajax_services"][$sObject][$sServiceKey][$sSafeLock] = array(
@@ -271,7 +271,7 @@ INITSCRIPT;
 		
 		$bRenamed = FALSE;
 		
-		$oFile = t3lib_div::makeInstance("t3lib_basicFileFunctions");
+		$oFile = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("t3lib_basicFileFunctions");
 		
 		// 5 minutes execution time
 		@set_time_limit(5 * 60);
@@ -287,7 +287,7 @@ INITSCRIPT;
 		
 		// Check filename against T3 deny pattern		
 		if($this->defaultTrue("/usedenypattern") !== FALSE) {
-			if(!t3lib_div::verifyFilenameAgainstDenyPattern($fileName)) {
+			if(!\TYPO3\CMS\Core\Utility\GeneralUtility::verifyFilenameAgainstDenyPattern($fileName)) {
 				return $this->handleAjaxRequest_exit(array(
 					"error" => array(
 						"code" => 104,

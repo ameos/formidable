@@ -59,7 +59,7 @@ class tx_rdtlister extends formidable_mainrenderlet {
 		$this->aClientifyColumns = array();
 		$this->aClientified = array();
 		if(($sClientify = $this->_navConf("/clientify")) !== FALSE && trim($sClientify) !== "") {
-			$this->aClientifyColumns = t3lib_div::trimExplode(",", $sClientify);
+			$this->aClientifyColumns = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $sClientify);
 		}
 
 		if(!$this->isFlexgridLister()) {
@@ -275,7 +275,7 @@ class tx_rdtlister extends formidable_mainrenderlet {
 				$sSessionHash = $this->_getSessionDataHashKey();
 				$sThrower = $sHtmlId;
 
-				$this->sGridurl = $this->oForm->_removeEndingSlash(t3lib_div::getIndpEnv("TYPO3_SITE_URL")) . "/index.php?eID=tx_ameosformidable&object=" . $sObject . "&servicekey=" . $sServiceKey . "&formid=" . $sFormId . "&safelock=" . $sSafeLock . "&thrower=" . $sThrower . '&sessionhash='. $sSessionHash;
+				$this->sGridurl = $this->oForm->_removeEndingSlash(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_SITE_URL")) . "/index.php?eID=tx_ameosformidable&object=" . $sObject . "&servicekey=" . $sServiceKey . "&formid=" . $sFormId . "&safelock=" . $sSafeLock . "&thrower=" . $sThrower . '&sessionhash='. $sSessionHash;
 
 				$GLOBALS["_SESSION"]["ameos_formidable"]["ajax_services"][$sObject][$sServiceKey][$sSafeLock] = array(
 					"requester" => array(
@@ -566,7 +566,7 @@ class tx_rdtlister extends formidable_mainrenderlet {
 
 		$sEnvMode = $this->oForm->__getEnvExecMode();
 		if($sEnvMode === "BE") {
-			$sRequestUrl = t3lib_div::getIndpEnv("TYPO3_REQUEST_URL");
+			$sRequestUrl = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_REQUEST_URL");
 			$aQueryParts = parse_url($sRequestUrl);
 
 			$aParams = array();
@@ -581,23 +581,23 @@ class tx_rdtlister extends formidable_mainrenderlet {
 
 			$sBaseUrl = $aQueryParts["scheme"] . "://" . $aQueryParts["host"] . $aQueryParts["path"];
 			if(!empty($aBaseParams)) {
-				$sBaseUrl .= "?" . substr(t3lib_div::implodeArrayForUrl("", $aBaseParams), 1);
+				$sBaseUrl .= "?" . substr(\TYPO3\CMS\Core\Utility\GeneralUtility::implodeArrayForUrl("", $aBaseParams), 1);
 			}
 
 		} elseif($sEnvMode === "EID") {
-			$sBaseUrl = t3lib_div::getIndpEnv("HTTP_REFERER");
+			$sBaseUrl = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("HTTP_REFERER");
 			$aQueryParts = parse_url($sBaseUrl);
 			$aParams = array();
 			if($aQueryParts['query']) {
 				parse_str($aQueryParts['query'], $aParams);
 			}
 		} elseif($sEnvMode === "FE") {
-			$aParams = t3lib_div::_GET();
+			$aParams = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET();
 		}
 
-
-		$aFullParams = t3lib_div::array_merge_recursive_overrule(
-			$aParams,
+        $aFullParams = $aParams;
+        \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
+			$aFullParams,
 			$aRdtParams
 		);
 
@@ -611,7 +611,7 @@ class tx_rdtlister extends formidable_mainrenderlet {
 			);
 
 
-			$aRdtParamsExclude = t3lib_div::array_merge_recursive_overrule(
+			\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
 				$aRdtParamsExclude,
 				$this->oForm->aParamsToRemove
 			);
@@ -630,36 +630,35 @@ class tx_rdtlister extends formidable_mainrenderlet {
 			}
 		}
 
-		if(array_key_exists("cHash", $aFullParams)) {
+		if(is_array($aFullParams) && array_key_exists("cHash", $aFullParams)) {
 			unset($aFullParams["cHash"]);
 		}
 
 		if($this->oForm->defaultFalse("/cachehash", $this->aElement) === TRUE) {
-			$aFullParams["cHash"] = t3lib_div::shortMD5(
-				serialize(
-					t3lib_div::cHashParams(
-						t3lib_div::implodeArrayForUrl('',$aFullParams)
-					)
-				)
+            $cacheHash = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Page\\CacheHashCalculator');
+			$aFullParams["cHash"] = \TYPO3\CMS\Core\Utility\GeneralUtility::shortMD5(
+				serialize($cacheHash->calculateCacheHash($aFullParams))
 			);
 		}
 
 		if($sEnvMode === "BE" || $sEnvMode === "EID") {
 			return $this->oForm->xhtmlUrl(
-				t3lib_div::linkThisUrl(
+				\TYPO3\CMS\Core\Utility\GeneralUtility::linkThisUrl(
 					$sBaseUrl,
 					$aFullParams
 				)
 			);
 		} elseif($sEnvMode === "FE") {
-
-			if(array_key_exists("id", $aFullParams)) {
+            if (!is_array($aFullParams)) {
+                $aFullParams = array();
+            }
+			if(is_array($aFullParams) && array_key_exists("id", $aFullParams)) {
 				unset($aFullParams["id"]);
 			}
 
 			return $this->oForm->cObj->typolink_URL(array(
 				"parameter" => $GLOBALS["TSFE"]->id,
-				"additionalParams" => t3lib_div::implodeArrayForUrl(
+				"additionalParams" => \TYPO3\CMS\Core\Utility\GeneralUtility::implodeArrayForUrl(
 					"",
 					$aFullParams
 				)
@@ -763,7 +762,7 @@ class tx_rdtlister extends formidable_mainrenderlet {
 		if($this->bNoTemplate !== TRUE) {
 			$aAltRows = array();
 			$aRowsHtml = array();
-			$sRowsPart = t3lib_parsehtml::getSubpart($aTemplate["html"], "###ROWS###");
+			$sRowsPart = \Ameos\AmeosFormidable\Html\HtmlParser::getSubpart($aTemplate["html"], "###ROWS###");
 
 			if($aTemplate["default"] === TRUE) {
 				$sAltList = "###ROW1###, ###ROW2###";
@@ -773,11 +772,11 @@ class tx_rdtlister extends formidable_mainrenderlet {
 				$this->oForm->mayday("RENDERLET LISTER <b>" . $this->_getName() . "</b> requires /template/alternaterows to be properly set. Please check your XML configuration");
 			}
 
-			$aAltList = t3lib_div::trimExplode(",", $sAltList);
+			$aAltList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $sAltList);
 			if(sizeof($aAltList) > 0) {
 				reset($aAltList);
 				while(list(, $sAltSubpart) = each($aAltList)) {
-					$aAltRows[] = t3lib_parsehtml::getSubpart($sRowsPart, $sAltSubpart);
+					$aAltRows[] = \Ameos\AmeosFormidable\Html\HtmlParser::getSubpart($sRowsPart, $sAltSubpart);
 				}
 
 				$iNbAlt = sizeOf($aAltRows);
@@ -874,7 +873,7 @@ class tx_rdtlister extends formidable_mainrenderlet {
 				}
 			}
 
-			$aTemplate["html"] = t3lib_parsehtml::substituteSubpart(
+			$aTemplate["html"] = \Ameos\AmeosFormidable\Html\HtmlParser::substituteSubpart(
 				$aTemplate["html"],
 				"###ROWS###",
 				implode("", $aRowsHtml),
@@ -983,7 +982,7 @@ class tx_rdtlister extends formidable_mainrenderlet {
 
 				if($sLink !== "") {
 					$aLinks[$sWhich] = $this->oForm->_parseTemplateCode(
-						t3lib_parsehtml::getSubpart($sPager, "###LINK" . strtoupper($sWhich) . "###"),
+						\Ameos\AmeosFormidable\Html\HtmlParser::getSubpart($sPager, "###LINK" . strtoupper($sWhich) . "###"),
 						array(
 							"link" => $sLink,
 							"linkid" => $sHtmlId . "_pagelink_" . strtolower($sWhich)
@@ -996,24 +995,24 @@ class tx_rdtlister extends formidable_mainrenderlet {
 				}
 			}
 
-			$sPager = t3lib_parsehtml::substituteSubpart($sPager, "###LINKFIRST###",$aLinks["first"], FALSE, FALSE);
-			$sPager = t3lib_parsehtml::substituteSubpart($sPager, "###LINKPREV###",	$aLinks["prev"], FALSE, FALSE);
-			$sPager = t3lib_parsehtml::substituteSubpart($sPager, "###LINKNEXT###",	$aLinks["next"], FALSE, FALSE);
-			$sPager = t3lib_parsehtml::substituteSubpart($sPager, "###LINKLAST###",	$aLinks["last"], FALSE, FALSE);
+			$sPager = \Ameos\AmeosFormidable\Html\HtmlParser::substituteSubpart($sPager, "###LINKFIRST###",$aLinks["first"], FALSE, FALSE);
+			$sPager = \Ameos\AmeosFormidable\Html\HtmlParser::substituteSubpart($sPager, "###LINKPREV###",	$aLinks["prev"], FALSE, FALSE);
+			$sPager = \Ameos\AmeosFormidable\Html\HtmlParser::substituteSubpart($sPager, "###LINKNEXT###",	$aLinks["next"], FALSE, FALSE);
+			$sPager = \Ameos\AmeosFormidable\Html\HtmlParser::substituteSubpart($sPager, "###LINKLAST###",	$aLinks["last"], FALSE, FALSE);
 
 			// generating window
 			$sWindow = "";
 			if(!empty($this->aPager["window"])) {
 
-				#$sWindow = t3lib_parsehtml::getSubpart($sPager, "###WINDOW###");
-				$sWindow = t3lib_parsehtml::getSubpart($aTemplate["pager"], "###WINDOW###");
-				$sLinkNo = t3lib_parsehtml::getSubpart($sWindow, "###NORMAL###");
-				$sLinkAct = t3lib_parsehtml::getSubpart($sWindow, "###ACTIVE###");
-				$sMoreBefore = t3lib_parsehtml::getSubpart($sWindow, "###MORE_BEFORE###");
-				$sMoreAfter = t3lib_parsehtml::getSubpart($sWindow, "###MORE_AFTER###");
+				#$sWindow = \Ameos\AmeosFormidable\Html\HtmlParser::getSubpart($sPager, "###WINDOW###");
+				$sWindow = \Ameos\AmeosFormidable\Html\HtmlParser::getSubpart($aTemplate["pager"], "###WINDOW###");
+				$sLinkNo = \Ameos\AmeosFormidable\Html\HtmlParser::getSubpart($sWindow, "###NORMAL###");
+				$sLinkAct = \Ameos\AmeosFormidable\Html\HtmlParser::getSubpart($sWindow, "###ACTIVE###");
+				$sMoreBefore = \Ameos\AmeosFormidable\Html\HtmlParser::getSubpart($sWindow, "###MORE_BEFORE###");
+				$sMoreAfter = \Ameos\AmeosFormidable\Html\HtmlParser::getSubpart($sWindow, "###MORE_AFTER###");
 
 				if($this->aPager["alwaysfullwidth"] === TRUE) {
-					if(trim(($sLinkDisabled = t3lib_parsehtml::getSubpart($sWindow, "###DISABLED###"))) === "") {
+					if(trim(($sLinkDisabled = \Ameos\AmeosFormidable\Html\HtmlParser::getSubpart($sWindow, "###DISABLED###"))) === "") {
 						$this->oForm->mayday(
 							"RENDERLET " . $this->_getType() . " <b>" . $this->_getName() . "</b> - In your pager's template, you have to provide a <b>###DISABLED###</b> subpart inside the <b>###WINDOW###</b> subpart when defining <b>/window/alwaysFullWidth=TRUE</b>"
 						);
@@ -1067,10 +1066,10 @@ class tx_rdtlister extends formidable_mainrenderlet {
 
 				$sLinks = implode(" ", $aLinks);
 
-				$sWindow = t3lib_parsehtml::substituteSubpart($sWindow, "###WINDOWLINKS###", $sLinks, FALSE, FALSE);
+				$sWindow = \Ameos\AmeosFormidable\Html\HtmlParser::substituteSubpart($sWindow, "###WINDOWLINKS###", $sLinks, FALSE, FALSE);
 			}
 
-			$sPager = t3lib_parsehtml::substituteSubpart($sPager, "###WINDOW###", $sWindow, FALSE, FALSE);
+			$sPager = \Ameos\AmeosFormidable\Html\HtmlParser::substituteSubpart($sPager, "###WINDOW###", $sWindow, FALSE, FALSE);
 		} else {
 			$sPager = "";
 		}
@@ -1116,7 +1115,7 @@ class tx_rdtlister extends formidable_mainrenderlet {
 
 			$sSubpart = "###SORT_" . $sColumn . "###";
 
-			if(($sSortHtml = trim(t3lib_parsehtml::getSubpart($aTemplate["html"], $sSubpart))) != "") {
+			if(($sSortHtml = trim(\Ameos\AmeosFormidable\Html\HtmlParser::getSubpart($aTemplate["html"], $sSubpart))) != "") {
 
 				$sSortHtml = $this->oForm->_substLLLInHtml($sSortHtml);
 
@@ -1165,7 +1164,7 @@ class tx_rdtlister extends formidable_mainrenderlet {
 					$sTag = $sSortHtml;
 				}
 
-				$aTemplate["html"] = t3lib_parsehtml::substituteSubpart(
+				$aTemplate["html"] = \Ameos\AmeosFormidable\Html\HtmlParser::substituteSubpart(
 					$aTemplate["html"],
 					$sSubpart,
 					$sTag,
@@ -1242,8 +1241,8 @@ class tx_rdtlister extends formidable_mainrenderlet {
 
 			if(file_exists($aTemplate["path"])) {
 				if(is_readable($aTemplate["path"])) {
-					$aRes["html"] = t3lib_parsehtml::getSubpart(
-						t3lib_div::getUrl($aTemplate["path"]),
+					$aRes["html"] = \Ameos\AmeosFormidable\Html\HtmlParser::getSubpart(
+						\TYPO3\CMS\Core\Utility\GeneralUtility::getUrl($aTemplate["path"]),
 						$aTemplate["subpart"]
 					);
 
@@ -1307,8 +1306,8 @@ class tx_rdtlister extends formidable_mainrenderlet {
 
 				if(file_exists($aPagerTemplate["path"])) {
 					if(is_readable($aPagerTemplate["path"])) {
-						$aRes["pager"] = t3lib_parsehtml::getSubpart(
-							t3lib_div::getUrl($aPagerTemplate["path"]),
+						$aRes["pager"] = \Ameos\AmeosFormidable\Html\HtmlParser::getSubpart(
+							\TYPO3\CMS\Core\Utility\GeneralUtility::getUrl($aPagerTemplate["path"]),
 							$aPagerTemplate["subpart"]
 						);
 
@@ -1403,8 +1402,8 @@ ERRORMESSAGE;
 		$sPath = $this->sExtPath . "res/html/default-template.html";
 		$sSubPart = "###LISTPAGER###";
 
-		return t3lib_parsehtml::getSubpart(
-			t3lib_div::getUrl($sPath),
+		return \Ameos\AmeosFormidable\Html\HtmlParser::getSubpart(
+			\TYPO3\CMS\Core\Utility\GeneralUtility::getUrl($sPath),
 			$sSubPart
 		);
 	}
@@ -1430,16 +1429,16 @@ ERRORMESSAGE;
 		$sPath		= $this->sExtPath . "res/html/default-template.html";
 		$sSubpart	= "###LIST###";
 
-		$aRes["html"] = t3lib_parsehtml::getSubpart(
-			t3lib_div::getUrl($sPath),
+		$aRes["html"] = \Ameos\AmeosFormidable\Html\HtmlParser::getSubpart(
+			\TYPO3\CMS\Core\Utility\GeneralUtility::getUrl($sPath),
 			$sSubpart
 		);
 
 		/* including default styles in external CSS */
 
 		$aRes["styles"] = $this->oForm->_parseThrustedTemplateCode(
-			t3lib_parsehtml::getSubpart(
-				t3lib_div::getUrl($sPath),
+			\Ameos\AmeosFormidable\Html\HtmlParser::getSubpart(
+				\TYPO3\CMS\Core\Utility\GeneralUtility::getUrl($sPath),
 				"###STYLES###"
 			),
 			array(
@@ -1454,9 +1453,9 @@ ERRORMESSAGE;
 
 
 
-		$sTopColumn = t3lib_parsehtml::getSubpart($aRes["html"],		"###TOPCOLUMN###");
-		$sDataColumn1 = t3lib_parsehtml::getSubpart($aRes["html"],		"###DATACOLUMN1###");
-		$sDataColumn2 = t3lib_parsehtml::getSubpart($aRes["html"],		"###DATACOLUMN2###");
+		$sTopColumn = \Ameos\AmeosFormidable\Html\HtmlParser::getSubpart($aRes["html"],		"###TOPCOLUMN###");
+		$sDataColumn1 = \Ameos\AmeosFormidable\Html\HtmlParser::getSubpart($aRes["html"],		"###DATACOLUMN1###");
+		$sDataColumn2 = \Ameos\AmeosFormidable\Html\HtmlParser::getSubpart($aRes["html"],		"###DATACOLUMN2###");
 
 		reset($this->aOColumns);
 		$bSelectall = ($this->isEditableLister()) ? TRUE : FALSE;
@@ -1518,10 +1517,10 @@ ERRORMESSAGE;
 			*/
 		}
 
-		$aRes["html"] = t3lib_parsehtml::substituteSubpart($aRes["html"], "###STYLES###", "", FALSE, FALSE);
-		$aRes["html"] = t3lib_parsehtml::substituteSubpart($aRes["html"], "###DATACOLUMN1###", implode("", $aHtml["DATA"]["ROW1"]), FALSE, FALSE);
-		$aRes["html"] = t3lib_parsehtml::substituteSubpart($aRes["html"], "###DATACOLUMN2###", implode("", $aHtml["DATA"]["ROW2"]), FALSE, FALSE);
-		$aRes["html"] = t3lib_parsehtml::substituteSubpart($aRes["html"], "###TOPCOLUMN###", implode("", $aHtml["TOP"]), FALSE, FALSE);
+		$aRes["html"] = \Ameos\AmeosFormidable\Html\HtmlParser::substituteSubpart($aRes["html"], "###STYLES###", "", FALSE, FALSE);
+		$aRes["html"] = \Ameos\AmeosFormidable\Html\HtmlParser::substituteSubpart($aRes["html"], "###DATACOLUMN1###", implode("", $aHtml["DATA"]["ROW1"]), FALSE, FALSE);
+		$aRes["html"] = \Ameos\AmeosFormidable\Html\HtmlParser::substituteSubpart($aRes["html"], "###DATACOLUMN2###", implode("", $aHtml["DATA"]["ROW2"]), FALSE, FALSE);
+		$aRes["html"] = \Ameos\AmeosFormidable\Html\HtmlParser::substituteSubpart($aRes["html"], "###TOPCOLUMN###", implode("", $aHtml["TOP"]), FALSE, FALSE);
 
 		$aRes["html"] = $this->oForm->_parseThrustedTemplateCode(
 			$aRes["html"],
@@ -1552,19 +1551,21 @@ ERRORMESSAGE;
 
 			if(($aColumns = $this->_navConf("/columns")) !== FALSE && is_array($aColumns)) {
 				if($this->isEditableLister()) {
-					$aColumns = t3lib_div::array_merge_recursive_overrule(
-						array('column-selectrow' => array(
-							'type' => 'renderlet:CHECKSINGLE',
-							'label' => '',
-							'class' => 'formidable-selectrow',
-							'name' => 'selectrow',
-							'activelistable' => TRUE,
-							'canhiddencolumn' => 'false',
-							'exportable' => 'false',
-							'searchable' => 'false'
-						)),
+                    $aTempColumns = array('column-selectrow' => array(
+                        'type' => 'renderlet:CHECKSINGLE',
+                        'label' => '',
+                        'class' => 'formidable-selectrow',
+                        'name' => 'selectrow',
+                        'activelistable' => TRUE,
+                        'canhiddencolumn' => 'false',
+                        'exportable' => 'false',
+                        'searchable' => 'false'
+                    ));
+					\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
+						$aTempColumns,
 						$aColumns
 					);
+                    $aColumns = $aTempColumns;
 				}
 
 				$this->aOColumns = array();
@@ -2189,7 +2190,7 @@ INITSCRIPT;
 
 	function selectRow($aParams) {
 		if(trim($aParams['sys_event']['currentrows']) !== '') {
-			$aCurrentRows = t3lib_div::trimExplode(',', $aParams['sys_event']['currentrows']);
+			$aCurrentRows = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $aParams['sys_event']['currentrows']);
 
 			foreach($aCurrentRows as $iRowUid) {
 				$this->aSelectedRows[$iRowUid] = $iRowUid;
@@ -2204,7 +2205,7 @@ INITSCRIPT;
 
 	function unselectRow($aParams) {
 		if(trim($aParams['sys_event']['currentrows']) !== '') {
-			$aCurrentRows = t3lib_div::trimExplode(',', $aParams['sys_event']['currentrows']);
+			$aCurrentRows = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $aParams['sys_event']['currentrows']);
 
 			foreach($aCurrentRows as $iRowUid) {
 				unset($this->aSelectedRows[$iRowUid]);
@@ -2366,7 +2367,7 @@ INITSCRIPT;
 						$sSubpart = $this->getName();
 					}
 
-					$mHtml = t3lib_parsehtml::getSubpart(t3lib_div::getUrl($sPath), $sSubpart);
+					$mHtml = \Ameos\AmeosFormidable\Html\HtmlParser::getSubpart(\TYPO3\CMS\Core\Utility\GeneralUtility::getUrl($sPath), $sSubpart);
 					if(trim($mHtml) == "") {
 						$this->oForm->mayday("renderlet:" . $this->_getType() . "[name=" . $this->getName() . "] - The given template (<b>'" . $sPath . "'</b> with subpart marquer <b>'" . $sSubpart . "'</b>) <b>returned an empty string</b> - Check your template");
 					}
@@ -2550,13 +2551,13 @@ INITSCRIPT;
 		return $this->aSearchableColumns;
 	}
 
-	function handleAjaxRequest($oRequest) {
-		$iCurrentPage = intval(t3lib_div::_GP("page"));
+	function handleAjaxRequest(&$oRequest) {
+		$iCurrentPage = intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP("page"));
 		$aConfig = array(
 			'page' => intval($iCurrentPage - 1),
-			'perpage' => t3lib_div::_GP("rp"),
-			'sortcolumn' => (t3lib_div::_GP("sortname") == 'undefined') ? '' : t3lib_div::_GP("sortname"),
-			'sortdirection' => (t3lib_div::_GP("sortorder") == 'undefined') ? '' : t3lib_div::_GP("sortorder"),
+			'perpage' => \TYPO3\CMS\Core\Utility\GeneralUtility::_GP("rp"),
+			'sortcolumn' => (\TYPO3\CMS\Core\Utility\GeneralUtility::_GP("sortname") == 'undefined') ? '' : \TYPO3\CMS\Core\Utility\GeneralUtility::_GP("sortname"),
+			'sortdirection' => (\TYPO3\CMS\Core\Utility\GeneralUtility::_GP("sortorder") == 'undefined') ? '' : \TYPO3\CMS\Core\Utility\GeneralUtility::_GP("sortorder"),
 		);
 
 		$aData = $this->_fetchData($aConfig);

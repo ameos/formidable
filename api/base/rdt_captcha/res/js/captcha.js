@@ -4,18 +4,19 @@ Formidable.Classes.Captcha = Formidable.inherit({
 	oInput: false,
 	__constructor: function(oConfig) {
 		this.oCaptcha = this.oReload = this.oInput = false;
-		this.base(oConfig);
+		this.config = oConfig;
+		this.oForm = Formidable.f(this.config.formid);
 
-		if(oCaptcha = $(this.config.id + 'img')) {
+		if(oCaptcha = Formidable.getElementById(this.config.id + 'img')) {
 			this.oCaptcha = oCaptcha;
 		}
 
-		if(oReload = $(this.config.id + '_reload')) {
+		if(oReload = Formidable.getElementById(this.config.id + '_reload')) {
 			this.oReload = oReload;
-			Event.observe(this.oReload, "click", this.reload.bind(this));
+			Formidable.attachEvent(this.oReload, "click", this.reload.bind(this));
 		}
 
-		if(oInput = $(this.config.id)) {
+		if(oInput = Formidable.getElementById(this.config.id)) {
 			this.oInput = oInput;
 		}
 	},

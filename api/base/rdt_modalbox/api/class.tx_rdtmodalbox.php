@@ -70,7 +70,7 @@ class tx_rdtmodalbox extends formidable_mainrenderlet {
 		}
 
 		$aChildsBag = $this->renderChildsBag();
-		$aChildsBag = t3lib_div::array_merge_recursive_overrule($aChildsBag, $aTags);
+		\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($aChildsBag, $aTags);
 
 		if($this->oForm->__getEnvExecMode() !== "EID") {
 			#$this->oForm->bInlineEvents = $bOldValue;
@@ -113,7 +113,7 @@ class tx_rdtmodalbox extends formidable_mainrenderlet {
 		$oForm->oJs->loadScriptaculous();
 		//$this->loadNiftyCube();
 
-		$sPath = $oForm->_removeEndingSlash(PATH_site) . "/" . t3lib_extMgm::siteRelPath("ameos_formidable") . "api/base/rdt_modalbox/res/js/modalbox.js";
+		$sPath = $oForm->_removeEndingSlash(PATH_site) . "/" . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath("ameos_formidable") . "api/base/rdt_modalbox/res/js/modalbox.js";
 
 		$oForm->additionalHeaderDataLocalScript(
 			$sPath,
@@ -122,8 +122,8 @@ class tx_rdtmodalbox extends formidable_mainrenderlet {
 	}
 
 	// this has to be static !!!
-	function loaded(&$aParams) {
-		$aParams["form"]->oJs->loadScriptaculous();
+	static function loaded(&$aParams) {
+		if($aParams["form"]) $aParams["form"]->oJs->loadScriptaculous();
 	}
 
 	function majixRepaint() {

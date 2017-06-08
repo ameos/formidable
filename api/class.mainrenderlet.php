@@ -94,7 +94,7 @@
 
 		function initDependancies() {
 			if(($sDeps = $this->_navConf("/dependson")) !== FALSE) {
-				$aDeps = t3lib_div::trimExplode(",", trim($sDeps));
+				$aDeps = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", trim($sDeps));
 				
 				reset($aDeps);
 				while(list(, $sDep) = each($aDeps)) {
@@ -335,7 +335,7 @@
 						$aNeededParams = array();
 
 						if(array_key_exists("params", $aEvent) && is_string($aEvent["params"])) {
-							$aNeededParams = t3lib_div::trimExplode(",", $aEvent["params"]);
+							$aNeededParams = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $aEvent["params"]);
 							$aEvent["params"] = $aNeededParams;
 						}
 
@@ -1077,11 +1077,11 @@ TOOLTIP;
 			$aStyles = array();
 
 			if(trim($sStyle) !== "") {
-				$aTemp = t3lib_div::trimExplode(";", $sStyle);
+				$aTemp = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(";", $sStyle);
 				reset($aTemp);
 				while(list($sKey,) = each($aTemp)) {
 					if(trim($aTemp[$sKey]) !== "") {
-						//$aStyleItem = t3lib_div::trimExplode(":", $aTemp[$sKey]);
+						//$aStyleItem = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(":", $aTemp[$sKey]);
 						$iPosColon = strpos($aTemp[$sKey], ":");
 						
 						$aStyles[strtolower(trim(substr($aTemp[$sKey], 0, $iPosColon)))] = $this->oForm->evaluate_smartString(
@@ -1156,7 +1156,7 @@ TOOLTIP;
 				}
 
 				if(is_string($mClass) && (trim($mClass) !== "")) {
-					$aClasses = t3lib_div::trimExplode(" ", $mClass);
+					$aClasses = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(" ", $mClass);
 				}
 			}
 			
@@ -1232,7 +1232,7 @@ TOOLTIP;
 							if(array_key_exists("params", $mEvent)) {
 								if(is_string($mEvent["params"])) {
 									
-									$aTemp = t3lib_div::trimExplode(",", $mEvent["params"]);
+									$aTemp = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $mEvent["params"]);
 									reset($aTemp);
 									while(list($sKey,) = each($aTemp)) {
 										$aNeededParams[] = array(
@@ -1255,7 +1255,7 @@ TOOLTIP;
 							}
 
 							if(!in_array($sWhen, $this->oForm->aAvailableCheckPoints)) {
-								$this->oForm->mayday("SERVER EVENT on <b>" . $sEventName . " " . $this->getAbsName() . "</b>: defined checkpoint (when='" . $sWhen . "') does not exists; Available checkpoints are: <br /><br />" . t3lib_div::view_array($this->oForm->aAvailableCheckPoints));
+								$this->oForm->mayday("SERVER EVENT on <b>" . $sEventName . " " . $this->getAbsName() . "</b>: defined checkpoint (when='" . $sWhen . "') does not exists; Available checkpoints are: <br /><br />" . \TYPO3\CMS\Core\Utility\GeneralUtility::view_array($this->oForm->aAvailableCheckPoints));
 							}
 
 							$bEarlyBird = FALSE;
@@ -1265,7 +1265,7 @@ TOOLTIP;
 									#debug("ici");
 									$bEarlyBird = TRUE;
 								} else {
-									$this->oForm->mayday("SERVER EVENT on <b>" . $sEventName . " " . $this->getAbsName() . "</b>: defined checkpoint (when='" . $sWhen . "') triggers too early in the execution to be catchable by a server event.<br />The first checkpoint available for server event is <b>after-init-renderlets</b>. <br /><br />The full list of checkpoints is: <br /><br />" . t3lib_div::view_array($this->oForm->aAvailableCheckPoints));
+									$this->oForm->mayday("SERVER EVENT on <b>" . $sEventName . " " . $this->getAbsName() . "</b>: defined checkpoint (when='" . $sWhen . "') triggers too early in the execution to be catchable by a server event.<br />The first checkpoint available for server event is <b>after-init-renderlets</b>. <br /><br />The full list of checkpoints is: <br /><br />" . \TYPO3\CMS\Core\Utility\GeneralUtility::view_array($this->oForm->aAvailableCheckPoints));
 								}
 							}
 
@@ -1661,7 +1661,6 @@ JAVASCRIPT;
 			$aUserItems = array();
 
 			if(($bFromTCA = $this->defaultFalse("/data/items/fromtca")) === TRUE) {
-				t3lib_div::loadTCA($this->oForm->oDataHandler->tableName());
 				if(($aItems = $this->oForm->_navConf("columns/" . $this->_getName() . "/config/items", $GLOBALS["TCA"][$this->oForm->oDataHandler->tableName()])) !== FALSE) {
 					$aItems = $this->oForm->_tcaToRdtItems($aItems);
 				}
@@ -1855,7 +1854,7 @@ JAVASCRIPT;
 					}
 
 					if (($this->defaultFalse("/db/static/", $aConf) === TRUE) &&
-						(t3lib_extMgm::isLoaded('static_info_tables'))) {
+						(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('static_info_tables'))) {
 						// If it is a static table
 						$aDbItems = $this->__getItemsStaticTable($mTable, $mValueField, $mWhere);
 					} else {
@@ -1993,7 +1992,7 @@ JAVASCRIPT;
 						$sOnFields = $aConf["onfields"];
 					}
 
-					$aFields = t3lib_div::trimExplode(",", $sOnFields);
+					$aFields = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $sOnFields);
 					reset($aFields);
 				} else {
 					$aFields = array($sName);
@@ -2062,7 +2061,7 @@ JAVASCRIPT;
 							//				: recherche full text si "jj kjk jk"
 
 							$sValue = str_replace(array(" ", ",", " and ", " And ", " aNd ", " anD ", " AnD ", " ANd ", " aND ", " AND ", " et ", " Et ", " eT ", " ET "), "+", trim($sValue));
-							$aWords = t3lib_div::trimExplode("+", $sValue);
+							$aWords = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode("+", $sValue);
 
 							if(is_array($aConf["mode"]) && array_key_exists("handlepluriels", $aConf["mode"])) {
 								reset($aWords);
@@ -2410,7 +2409,7 @@ JAVASCRIPT;
 			
 			if(($mValue = $this->oForm->navDeepData($sAbsPath, $this->oForm->aPreRendered)) !== FALSE) {
 				if(is_array($mValue) && array_key_exists("childs", $mValue)) {
-					$aRendered = t3lib_div::array_merge_recursive_overrule(
+					\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
 						$aRendered,
 						$mValue["childs"]
 					);
@@ -2445,8 +2444,8 @@ JAVASCRIPT;
 					$sSubpart = $this->getName();
 				}
 
-				$mHtml = t3lib_parsehtml::getSubpart(
-					t3lib_div::getUrl($sPath),
+				$mHtml = \Ameos\AmeosFormidable\Html\HtmlParser::getSubpart(
+					\TYPO3\CMS\Core\Utility\GeneralUtility::getUrl($sPath),
 					$sSubpart
 				);
 
@@ -2941,7 +2940,7 @@ JAVASCRIPT;
 
 			if(($sClass = $this->_navConf("/class")) !== FALSE) {
 				$sClass = trim($sClass);
-				$aClasses = t3lib_div::trimExplode(" ", $sClass);
+				$aClasses = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(" ", $sClass);
 			} else {
 				$aClasses = array();
 			}
@@ -3688,7 +3687,7 @@ JAVASCRIPT;
 					$sAbsName = $this->getAbsName();
 
 					while(!$this->hasError() && list($sKey, $aValidator) = each($aConf)) {
-						if($sKey{0} === "v" && $sKey{1} === "a" && t3lib_div::isFirstPartOfStr($sKey, "validator") && !t3lib_div::isFirstPartOfStr($sKey, "validators")) {
+						if($sKey{0} === "v" && $sKey{1} === "a" && \TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "validator") && !\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sKey, "validators")) {
 							// the conf section exists
 							// call validator
 							$oValidator = $this->oForm->_makeValidator($aValidator);
@@ -3716,7 +3715,7 @@ JAVASCRIPT;
 			}
 		}
 		
-		function callRunneable($mMixed) {
+		function &callRunneable($mMixed) {
 
 			$aArgs = func_get_args();
 			$iNbParams = (count($aArgs) - 1);	// without the runneable itself

@@ -18,7 +18,6 @@
 		var $ajQueryPluginsToLoad = array();
 
 		function _init(&$oForm) {
-			require_once(PATH_tslib . "class.tslib_pagegen.php");
 			$this->oForm =& $oForm;
 
 			$this->sJQueryUIPath = $this->oForm->sExtPath . "res/jsfwk/jquery/core+ui/";
@@ -27,7 +26,7 @@
 		}
 
 		function mayLoadJsFramework() {
-			if($this->oForm->__getEnvExecMode() == "BE") {
+			if(tx_ameosformidable::__getEnvExecMode() == "BE") {
 				return TRUE;
 			}
 
@@ -46,7 +45,7 @@
 		}
 
 		function mayLoadPrototype() {
-			if($this->oForm->__getEnvExecMode() == "BE") {
+			if(tx_ameosformidable::__getEnvExecMode() == "BE") {
 				return TRUE;
 			}
 
@@ -65,7 +64,7 @@
 		}
 
 		function mayLoadPrototypeAddons() {
-			if($this->oForm->__getEnvExecMode() == "BE") {
+			if(tx_ameosformidable::__getEnvExecMode() == "BE") {
 				return TRUE;
 			}
 
@@ -125,14 +124,14 @@
 
 		function minified() {
 			return (
-				$this->oForm->__getEnvExecMode() !== "BE" && 
+				tx_ameosformidable::__getEnvExecMode() !== "BE" && 
 				intval($this->oForm->conf["minify."]["enabled"]) === 1 &&
 				(
 					file_exists(
-						$this->oForm->toServerPath(t3lib_extMgm::siteRelPath("ameos_formidable") . "res/jsfwk/minified/formidable.minified.prototype.js")
+						$this->oForm->toServerPath(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath("ameos_formidable") . "res/jsfwk/minified/formidable.minified.prototype.js")
 					) ||
 					file_exists(
-						$this->oForm->toServerPath(t3lib_extMgm::siteRelPath("ameos_formidable") . "res/jsfwk/minified/formidable.minified.jquery.js")
+						$this->oForm->toServerPath(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath("ameos_formidable") . "res/jsfwk/minified/formidable.minified.jquery.js")
 					)
 				)
 			);
@@ -144,10 +143,10 @@
 				intval($this->oForm->conf["minify."]["gzip"]) === 1 &&
 				(
 					file_exists(
-						$this->oForm->toServerPath(t3lib_extMgm::siteRelPath("ameos_formidable") . "res/jsfwk/minified/formidable.minified.prototype.js.gz")
+						$this->oForm->toServerPath(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath("ameos_formidable") . "res/jsfwk/minified/formidable.minified.prototype.js.gz")
 					) ||
 					file_exists(
-						$this->oForm->toServerPath(t3lib_extMgm::siteRelPath("ameos_formidable") . "res/jsfwk/minified/formidable.minified.jquery.js.gz")
+						$this->oForm->toServerPath(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath("ameos_formidable") . "res/jsfwk/minified/formidable.minified.jquery.js.gz")
 					)
 				)
 			);
@@ -160,8 +159,8 @@
 				"Misc" => array(
 					"Urls" => array(
 						"Ajax" => array(
-							"event" => $this->oForm->_removeEndingSlash(t3lib_div::getIndpEnv("TYPO3_SITE_URL")) . "/index.php?eID=tx_ameosformidable&object=tx_ameosformidable&servicekey=ajaxevent",
-							"service" => $this->oForm->_removeEndingSlash(t3lib_div::getIndpEnv("TYPO3_SITE_URL")) . "/index.php?eID=tx_ameosformidable&object=tx_ameosformidable&servicekey=ajaxservice",
+							"event" => $this->oForm->_removeEndingSlash(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_SITE_URL")) . "/index.php?eID=tx_ameosformidable&object=tx_ameosformidable&servicekey=ajaxevent",
+							"service" => $this->oForm->_removeEndingSlash(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_SITE_URL")) . "/index.php?eID=tx_ameosformidable&object=tx_ameosformidable&servicekey=ajaxservice",
 						),
 					),
 					"MajixSpinner" => (($aSpinner = $this->oForm->_navConf($this->oForm->sXpathToMeta . "majixspinner")) !== FALSE) ? $aSpinner : array(),
@@ -222,9 +221,9 @@ JAVASCRIPT;
 			}
 
 			if($this->gziped()) {
-				$sPath = t3lib_div::getIndpEnv("TYPO3_SITE_URL") . t3lib_extMgm::siteRelPath("ameos_formidable") . "res/jsfwk/minified/formidable.minified." . $sJsapi . ".js.php";
+				$sPath = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_SITE_URL") . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath("ameos_formidable") . "res/jsfwk/minified/formidable.minified." . $sJsapi . ".js.php";
 			} else {
-				$sPath = t3lib_div::getIndpEnv("TYPO3_SITE_URL") . t3lib_extMgm::siteRelPath("ameos_formidable") . "res/jsfwk/minified/formidable.minified." . $sJsapi . ".js";
+				$sPath = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_SITE_URL") . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath("ameos_formidable") . "res/jsfwk/minified/formidable.minified." . $sJsapi . ".js";
 			}
 
 			$this->oForm->additionalHeaderData(
@@ -253,7 +252,7 @@ JAVASCRIPT;
 		}
 
 		function _mayLoadJQuery() {
-			return ($this->oForm->_navConf($this->oForm->sXpathToMeta . "jsapi") === "jquery");
+			return ($this->oForm->_navConf($this->oForm->sXpathToMeta . "jsapi") === "jquery" && $this->oForm->defaultTrue($this->oForm->sXpathToMeta . "loadjquery"));
 		}
 
 		function _includeJQuery() {
@@ -479,7 +478,7 @@ JAVASCRIPT;
 				);
 			}
 
-			$sPath = t3lib_div::getIndpEnv("TYPO3_SITE_URL") . t3lib_extMgm::siteRelPath("ameos_formidable") . "res/jsfwk/framework.js";
+			$sPath = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_SITE_URL") . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath("ameos_formidable") . "res/jsfwk/framework.js";
 
 			$this->oForm->additionalHeaderData(
 				"<script type=\"text/javascript\" src=\"" . $sPath . "\"></script>",
@@ -499,7 +498,7 @@ JAVASCRIPT;
 		}
 
 		function _includeFormidablePath() {
-			$sPath = t3lib_div::getIndpEnv('TYPO3_SITE_URL') . t3lib_extmgm::siteRelPath("ameos_formidable");
+			$sPath = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('TYPO3_SITE_URL') . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath("ameos_formidable");
 			$sScript =<<<JAVASCRIPT
 
 	Formidable.initialize({path: '{$sPath}'});

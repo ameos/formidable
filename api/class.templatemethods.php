@@ -163,7 +163,7 @@ class formidable_templatemethods extends formidable_mainscriptingmethods {
 	}
 
 	function method_extPath($mData, $aParams) {
-		return t3lib_extMgm::extPath($aParams[0]);
+		return \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($aParams[0]);
 	}
 
 	function method_toWebPath($mData, $aParams) {
@@ -257,7 +257,7 @@ class formidable_templatemethods extends formidable_mainscriptingmethods {
 	}
 
 	function method_substr($mData, $aParams) {
-		return t3lib_div::fixed_lgd_cs(
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::fixed_lgd_cs(
 			tx_ameosformidable::templateDataAsString($mData),
 			$aParams[0],
 			$aParams[1]
@@ -328,7 +328,7 @@ class formidable_templatemethods extends formidable_mainscriptingmethods {
 	}
 	
 	function method_debug_trail($mData, $aParams) {
-		return t3lib_div::debug_trail();
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::debug_trail();
 	}
 	
 	function method_hsc($mData, $aParams) {
@@ -474,7 +474,7 @@ class formidable_templatemethods extends formidable_mainscriptingmethods {
 			$sSep = $aParams[0];
 		}
 		
-		$aRes = t3lib_div::trimExplode(
+		$aRes = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(
 			$sSep,
 			tx_ameosformidable::templateDataAsString($mData)
 		);

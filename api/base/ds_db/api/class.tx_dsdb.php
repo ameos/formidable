@@ -25,7 +25,7 @@ class tx_dsdb extends formidable_maindatasource {
 		$sSignature = FALSE;
 		$this->initDb();
 
-		$oDataSet = t3lib_div::makeInstance("formidable_maindataset");
+		$oDataSet = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("formidable_maindataset");
 
 		if($sKey === "new") {
 			// new record to create
@@ -117,7 +117,7 @@ class tx_dsdb extends formidable_maindatasource {
 	function initDb() {
 		if($this->oDb === FALSE) {
 			if(($aLink = $this->_navConf("/link")) !== FALSE) {
-				$this->oDb = t3lib_div::makeInstance("t3lib_db");
+				$this->oDb = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("t3lib_db");
 
 				if(tx_ameosformidable::isRunneable(($sHost = $aLink["host"]))) {
 					$sHost = $this->callRunneable($sHost);
@@ -244,7 +244,7 @@ class tx_dsdb extends formidable_maindatasource {
 				// we have to determine the table name
 
 				require_once(PATH_t3lib . "class.t3lib_sqlparser.php");
-				$oParser = t3lib_div::makeInstance("t3lib_sqlparser");
+				$oParser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("t3lib_sqlparser");
 				$aParsed = $oParser->parseSQL($sSqlBase);
 
 				if(is_array($aParsed) && count($aParsed["FROM"]) == 1) {
@@ -262,7 +262,7 @@ class tx_dsdb extends formidable_maindatasource {
 			$sEnableFields = "";
 		}
 
-		if(t3lib_div::isFirstPartOfStr(strtoupper($sSqlBase), "SELECT")) {
+		if(\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr(strtoupper($sSqlBase), "SELECT")) {
 			// modify the SQL query to include SQL_CALC_FOUND_ROWS
 			$sSqlBase = "SELECT SQL_CALC_FOUND_ROWS " . substr($sSqlBase, strlen("SELECT"));
 		} else {

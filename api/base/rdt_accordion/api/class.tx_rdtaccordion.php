@@ -57,7 +57,7 @@ class tx_rdtaccordion extends formidable_mainrenderlet {
 		
 		if(($sEvent = $this->_navConf("/event")) !== FALSE) {
 			$sEvent = strtolower(trim($sEvent));
-			if(t3lib_div::isFirstPartOfStr($sEvent, "on")) {
+			if(\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sEvent, "on")) {
 				$sEvent = substr($sEvent, 2);
 			}
 

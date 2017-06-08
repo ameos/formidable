@@ -22,7 +22,7 @@ class tx_rdtlistbox extends formidable_mainrenderlet {
 		$sValue = $this->getValue($aItems);
 		if($this->_isMultiple()) {
 			if(!is_array($sValue)) {
-				$sValue = t3lib_div::trimExplode(",", $sValue);
+				$sValue = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $sValue);
 			}
 		}
 
@@ -152,7 +152,7 @@ class tx_rdtlistbox extends formidable_mainrenderlet {
 		}
 
 		if($this->_isMultiple() && !is_array($data)) {
-			$data = t3lib_div::trimExplode(",", $data);
+			$data = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $data);
 		}
 
 		if(is_array($data)) {
@@ -204,7 +204,7 @@ class tx_rdtlistbox extends formidable_mainrenderlet {
 
 	function _sqlSearchClause($sValue, $sFieldPrefix = "", $sFieldName = "", $bRec = TRUE) {
 
-		$aValues = t3lib_div::trimExplode(",", $sValue);
+		$aValues = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $sValue);
 		$aParts = array();
 
 		if($sFieldName === "") {
@@ -378,7 +378,7 @@ class tx_rdtlistbox extends formidable_mainrenderlet {
 	function _unFlatten($sData) {
 		if($this->_isMultiple()) {
 			if(!$this->_emptyFormValue($sData)) {
-				return t3lib_div::trimExplode(",", $sData);
+				return \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $sData);
 			} else {
 				return array();
 			}

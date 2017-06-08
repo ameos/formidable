@@ -80,7 +80,7 @@ class tx_rdtdate extends formidable_mainrenderlet {
 		$sLabel = $this->getLabel();
 
 		$sTriggerId = $this->_getTriggerId();
-		$sTrigger = " <img src='" . t3lib_div::getIndpEnv("TYPO3_SITE_URL") . $this->sExtRelPath . "res/lib/js_calendar/img.gif' id='" . $sTriggerId . "' style='cursor: pointer;' alt='Pick date' /> ";
+		$sTrigger = " <img src='" . \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_SITE_URL") . $this->sExtRelPath . "res/lib/js_calendar/img.gif' id='" . $sTriggerId . "' style='cursor: pointer;' alt='Pick date' /> ";
 
 		$this->_initJs();
 
@@ -345,7 +345,7 @@ INITSCRIPT;
 		));
 	}
 
-	function includeScripts($aConf) {
+	function includeScripts($aConf = array()) {
 		parent::includeScripts($aConf);
 		$sAbsName = $this->_getElementHtmlId();
 

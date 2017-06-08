@@ -65,7 +65,7 @@ class tx_rdtautocomplete extends formidable_mainrenderlet {
 		$sSafeLock = $this->_getSessionDataHashKey();
 		$sThrower = $sHtmlId;
 
-		$sSearchUrl = $this->oForm->_removeEndingSlash(t3lib_div::getIndpEnv("TYPO3_SITE_URL")) . "/index.php?eID=tx_ameosformidable&object=" . $sObject . "&servicekey=" . $sServiceKey . "&formid=" . $sFormId . "&safelock=" . $sSafeLock . "&thrower=" . $sThrower;
+		$sSearchUrl = $this->oForm->_removeEndingSlash(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_SITE_URL")) . "/index.php?eID=tx_ameosformidable&object=" . $sObject . "&servicekey=" . $sServiceKey . "&formid=" . $sFormId . "&safelock=" . $sSafeLock . "&thrower=" . $sThrower;
 
 		$GLOBALS["_SESSION"]["ameos_formidable"]["ajax_services"][$sObject][$sServiceKey][$sSafeLock] = array(
 			"requester" => array(
@@ -128,13 +128,13 @@ class tx_rdtautocomplete extends formidable_mainrenderlet {
 			}
 		}
 
-		$aAltList = t3lib_div::trimExplode(",", $sAltRows);
+		$aAltList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $sAltRows);
 		if(sizeof($aAltList) > 0) {
-			$sRowsPart = t3lib_parsehtml::getSubpart($sTemplate, "###ROWS###");
+			$sRowsPart = \TYPO3\CMS\Core\Html\HtmlParser::getSubpart($sTemplate, "###ROWS###");
 
 			reset($aAltList);
 			while(list(, $sAltSubpart) = each($aAltList)) {
-				$sHtml = t3lib_parsehtml::getSubpart($sRowsPart, $sAltSubpart);
+				$sHtml = \TYPO3\CMS\Core\Html\HtmlParser::getSubpart($sRowsPart, $sAltSubpart);
 				if(empty($sHtml)) {
 					$this->oForm->mayday("renderlet:" . $this->_getType() . "[name=" . $this->getName() . "] - The given template with subpart marquer <b>'" . $sAltSubpart . "'</b> returned an empty string - Please check your template!");
 				}
@@ -149,7 +149,7 @@ class tx_rdtautocomplete extends formidable_mainrenderlet {
 
 		if(($aTemplate = $this->_navConf("/template")) !== FALSE) {
 
-			$sPath = t3lib_div::getFileAbsFileName($this->oForm->_navConf("/path", $aTemplate));
+			$sPath = \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($this->oForm->_navConf("/path", $aTemplate));
 			if(!file_exists($sPath)) {
 				$this->oForm->mayday("renderlet:" . $this->_getType() . "[name=" . $this->getName() . "] - The given template file path (<b>'" . $sPath . "'</b>) doesn't exists.");
 			} elseif(is_dir($sPath)) {
@@ -162,8 +162,8 @@ class tx_rdtautocomplete extends formidable_mainrenderlet {
 				$sSubpart = $this->getName();
 			}
 
-			$sHtml = t3lib_parsehtml::getSubpart(
-				t3lib_div::getUrl($sPath),
+			$sHtml = \TYPO3\CMS\Core\Html\HtmlParser::getSubpart(
+				\TYPO3\CMS\Core\Utility\GeneralUtility::getUrl($sPath),
 				$sSubpart
 			);
 
@@ -184,9 +184,9 @@ class tx_rdtautocomplete extends formidable_mainrenderlet {
 	}
 
 	function handleAjaxRequest($oRequest) {
-		$this->aConfig['searchType'] = t3lib_div::_GP('searchType');
-		$this->aConfig['searchText'] = t3lib_div::_GP('searchText');
-		$this->aConfig['searchCounter'] = (int)t3lib_div::_GP('searchCounter');
+		$this->aConfig['searchType'] = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('searchType');
+		$this->aConfig['searchText'] = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('searchText');
+		$this->aConfig['searchCounter'] = (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('searchCounter');
 
 		$this->_renderList($aParts, $aRowsHtml);
 
@@ -222,7 +222,7 @@ class tx_rdtautocomplete extends formidable_mainrenderlet {
 				$aRowsHtml[] = trim($sRowHtml);
 			}
 
-			$sHtml = t3lib_parsehtml::substituteSubpart(
+			$sHtml = \TYPO3\CMS\Core\Html\HtmlParser::substituteSubpart(
 				trim($this->sTemplate),
 				"###ROWS###",
 				"###ROWS###",

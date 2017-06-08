@@ -40,7 +40,7 @@ class tx_rdtmodalbox2 extends formidable_mainrenderlet {
 		}
 
 		$aChildsBag = $this->renderChildsBag();
-		$aChildsBag = t3lib_div::array_merge_recursive_overrule($aChildsBag, $aTags);
+		\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($aChildsBag, $aTags);
 
 		if($this->oForm->__getEnvExecMode() !== "EID") {
 			$aEventsAfter = array_keys($this->oForm->aRdtEvents);

@@ -130,12 +130,12 @@ new Draggable("' . $sHtmlId . '", ' . $sJson . ');
 					$bDroppable = TRUE;
 
 					if(($sAccept = $this->_navConf("/droppable/accept")) !== FALSE) {
-						//$aConf["accept"] = t3lib_div::trimExplode(",", $sAccept);
+						//$aConf["accept"] = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $sAccept);
 						$aConf["accept"] = $sAccept;
 					}
 
 					if(($sContainment = $this->_navConf("/droppable/containment")) !== FALSE) {
-						$aConf["containment"] = t3lib_div::trimExplode($sContainment);
+						$aConf["containment"] = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode($sContainment);
 						reset($aConf["containment"]);
 						while(list($iKey,) = each($aConf["containment"])) {
 							$aConf["containment"][$iKey] = $this->oForm->aORenderlets[$aConf["containment"][$iKey]]->_getElementHtmlId();

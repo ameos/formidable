@@ -72,10 +72,10 @@ class tx_rdrtemplate extends formidable_mainrenderer {
 				if(!file_exists($sPath)) {
 					$this->oForm->mayday("RENDERER TEMPLATE - Template file does not exist <b>" . $sPath . "</b>");
 				}
-				
+				$markerBasedTemplateService =  \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Service\\MarkerBasedTemplateService');
 				if(($sSubpart = $this->getTemplateSubpart()) !== FALSE) {
-					$mHtml = t3lib_parsehtml::getSubpart(
-						t3lib_div::getUrl($sPath),
+					$mHtml = $markerBasedTemplateService->getSubpart(
+						\TYPO3\CMS\Core\Utility\GeneralUtility::getUrl($sPath),
 						$sSubpart
 					);
 					
@@ -83,7 +83,7 @@ class tx_rdrtemplate extends formidable_mainrenderer {
 						$this->oForm->mayday("RENDERER TEMPLATE - The given template <b>'" . $sPath . "'</b> with subpart marker " . $sSubpart . " <b>returned an empty string</b> - Check your template");
 					}
 				} else {
-					$mHtml = t3lib_div::getUrl($sPath);
+					$mHtml = \TYPO3\CMS\Core\Utility\GeneralUtility::getUrl($sPath);
 					if(trim($mHtml) == "") {
 						$this->oForm->mayday("RENDERER TEMPLATE - The given template <b>'" . $sPath . "'</b> with no subpart marker <b>returned an empty string</b> - Check your template");
 					}

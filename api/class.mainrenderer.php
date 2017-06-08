@@ -9,9 +9,9 @@
 		var $bDisplayClassError = TRUE;
 		var $sDefaultLabelClass = "";	// no class on labels by default
 
-		function _init(&$oForm, $aElement, $aObjectType, $sXPath) {
+		function _init(&$oForm, $aElement, $aObjectType, $sXPath, $sNamePrefix = FALSE) {
 
-			parent::_init($oForm, $aElement, $aObjectType, $sXPath);
+			parent::_init($oForm, $aElement, $aObjectType, $sXPath, $sNamePrefix);
 
 			$this->_setDisplayLabels(!$this->oForm->isFalse($this->oForm->sXpathToMeta . "displaylabels"));
 			$this->_setFormWrap(!$this->oForm->isFalse($this->oForm->sXpathToMeta . "formwrap"));
@@ -179,7 +179,7 @@ TEMPLATE;
 				while(list($sKey,) = each($aFullEvent["params"])) {
 					$sParam = $aFullEvent["params"][$sKey]["get"];
 					
-					if(t3lib_div::isFirstPartOfStr($sParam, "rowData::")) {
+					if(\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sParam, "rowData::")) {
 						$sParam = substr($sParam, 9);
 					}
 					
@@ -317,7 +317,7 @@ TEMPLATE;
 			if(($mParams = $this->oForm->_navConf("/params", $aEvent)) !== FALSE) {
 				if(is_string($mParams)) {
 					
-					$aTemp = t3lib_div::trimExplode(",", $mParams);
+					$aTemp = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",", $mParams);
 					reset($aTemp);
 					while(list(, $sParam) = each($aTemp)) {
 						$aParamsCollection[] = array(
@@ -340,7 +340,7 @@ TEMPLATE;
 					$sParam = $aParamsCollection[$sKey]["get"];
 					$sAs = $aParamsCollection[$sKey]["as"];
 					
-					if(t3lib_div::isFirstPartOfStr($sParam, "rowData::")) {
+					if(\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sParam, "rowData::")) {
 						unset($aParams[$iKey]);
 						$sParamName = substr($sParam, 9);
 						
@@ -349,7 +349,7 @@ TEMPLATE;
 						} else {
 							$aRowParams[$sParamName] = "";
 						}
-					} elseif(t3lib_div::isFirstPartOfStr($sParam, "rowInput::")) {
+					} elseif(\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sParam, "rowInput::")) {
 						/* replacing *id* with *id for this row*; will be handled by JS framework */
 
 						// note: _getAjaxEvent() is called when in rows rendering for list
@@ -365,11 +365,11 @@ TEMPLATE;
 						if(array_key_exists($sParamName, $this->oForm->aORenderlets)) {
 							$aParams[$sKey] = "rowInput::" . $sAs . "::" . $this->oForm->aORenderlets[$sParamName]->_getElementHtmlId();
 						}
-					} elseif(t3lib_div::isFirstPartOfStr($sParam, "rawData::")) {
+					} elseif(\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sParam, "rawData::")) {
 						
 						$aRawParam = explode('::', $sParam);
 						$aParams[$aRawParam[1]] = $aRawParam[2];						
-					} elseif(t3lib_div::isFirstPartOfStr($sParam, "sys_event.")) {
+					} elseif(\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($sParam, "sys_event.")) {
 						$aParams[$sKey] = $sParam;
 					} elseif(array_key_exists($sParam, $this->oForm->aORenderlets)) {
 						
@@ -548,7 +548,7 @@ TEMPLATE;
 
 						if(!$this->oForm->isAbsWebPath($sUrl)) {
 							$sUrl = $this->oForm->toServerPath($sUrl);
-							$sStyle = t3lib_div::getUrl($sUrl);
+							$sStyle = \TYPO3\CMS\Core\Utility\GeneralUtility::getUrl($sUrl);
 							$sUrl = FALSE;
 						}
 					}

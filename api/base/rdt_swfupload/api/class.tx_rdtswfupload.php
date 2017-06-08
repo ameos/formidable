@@ -64,7 +64,7 @@ class tx_rdtswfupload extends formidable_mainrenderlet {
 		$sSafeLock = $this->_getSessionDataHashKey();
 		$sThrower = $sHtmlId;
 
-		$sUrl = $this->oForm->_removeEndingSlash(t3lib_div::getIndpEnv("TYPO3_SITE_URL")) . "/index.php?eID=tx_ameosformidable&object=" . $sObject . "&servicekey=" . $sServiceKey . "&formid=" . $sFormId . "&safelock=" . $sSafeLock . "&thrower=" . $sThrower;
+		$sUrl = $this->oForm->_removeEndingSlash(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("TYPO3_SITE_URL")) . "/index.php?eID=tx_ameosformidable&object=" . $sObject . "&servicekey=" . $sServiceKey . "&formid=" . $sFormId . "&safelock=" . $sSafeLock . "&thrower=" . $sThrower;
 		$sButtonUrl = $this->oForm->getLLLabel("LLL:EXT:ameos_formidable/api/base/rdt_swfupload/res/locallang.xml:buttonbrowse.image_url");
 
 		$aConf = array(
@@ -164,14 +164,14 @@ UNINITSCRIPT;
 
 		require_once(PATH_t3lib."class.t3lib_basicfilefunc.php");
 
-		$oFile = t3lib_div::makeInstance("t3lib_basicFileFunctions");
+		$oFile = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("t3lib_basicFileFunctions");
 		$aFile = $GLOBALS["_FILES"]["rdt_swfupload"];
 
 		$sOriginalFileName = stripslashes($aFile["name"]);
 		$sFileName = $sOriginalFileName;
 
 		if($this->defaultTrue("/usedenypattern") !== FALSE) {
-			if(!t3lib_div::verifyFilenameAgainstDenyPattern($sFileName)) {
+			if(!\TYPO3\CMS\Core\Utility\GeneralUtility::verifyFilenameAgainstDenyPattern($sFileName)) {
 				die("FILE EXTENSION DENIED");
 			}
 		}
@@ -204,7 +204,7 @@ UNINITSCRIPT;
 		$this->sUploadedFileName = $sFileName;
 		$this->aUploadedFileNameByOriginalFileName[$sOriginalFileName] = $sFileName;
 		
-		t3lib_div::upload_copy_move(
+		\TYPO3\CMS\Core\Utility\GeneralUtility::upload_copy_move(
 			$aFile["tmp_name"],
 			$sTarget
 		);
@@ -223,13 +223,13 @@ UNINITSCRIPT;
 	function getTargetDir() {
 
 		require_once(PATH_t3lib . "class.t3lib_basicfilefunc.php");
-		$oFileTool = t3lib_div::makeInstance("t3lib_basicFileFunctions");
+		$oFileTool = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("t3lib_basicFileFunctions");
 
 		if(tx_ameosformidable::isRunneable(($sTargetDir = $this->_navConf("/data/targetdir/")))) {
 			$sTargetDir = $this->callRunneable($sTargetDir);
 		}
 
-		return t3lib_div::fixWindowsFilePath(
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::fixWindowsFilePath(
 			$oFileTool->slashPath(
 				$oFileTool->rmDoubleSlash(
 					$sTargetDir
@@ -285,7 +285,7 @@ PHP;
 			);
 
 			if(($aCustomConf = $this->_navConf("/buttonbrowse")) !== FALSE) {
-				$aConf = t3lib_div::array_merge_recursive_overrule(
+				$aConf = \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
 					$aConf,
 					$aCustomConf
 				);
@@ -330,7 +330,7 @@ PHP;
 			);
 
 			if(($aCustomConf = $this->_navConf("/buttonupload")) !== FALSE) {
-				$aConf = t3lib_div::array_merge_recursive_overrule(
+				\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
 					$aConf,
 					$aCustomConf
 				);
@@ -363,7 +363,7 @@ PHP;
 			);
 
 			if(($aCustomConf = $this->_navConf("/listqueue")) !== FALSE) {
-				$aConf = t3lib_div::array_merge_recursive_overrule(
+				\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
 					$aConf,
 					$aCustomConf
 				);
@@ -498,7 +498,7 @@ JAVASCRIPT;
 				$mFileType
 			);
 			
-			$aFileTypes = t3lib_div::trimExplode(";", strtolower($mFileType));
+			$aFileTypes = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(";", strtolower($mFileType));
 			
 			$aRefinedTypes = array();
 			reset($aFileTypes);

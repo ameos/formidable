@@ -55,7 +55,7 @@ class tx_rdtlink extends formidable_mainrenderlet {
 				$sValue = trim($sValue);
 				$aParsedURL = @parse_url($sValue);
 
-				if(t3lib_div::inList('ftp,ftps,http,https,gopher,telnet', $aParsedURL['scheme'])) {
+				if(\TYPO3\CMS\Core\Utility\GeneralUtility::inList('ftp,ftps,http,https,gopher,telnet', $aParsedURL['scheme'])) {
 					$sUrl = $sValue;
 				} else {
 					$sUrl = FALSE;
@@ -77,7 +77,7 @@ class tx_rdtlink extends formidable_mainrenderlet {
 
 			if($sAnchor !== "") {
 				if($sUrl === FALSE) {
-					$sUrl = t3lib_div::getIndpEnv("REQUEST_URI");
+					$sUrl = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv("REQUEST_URI");
 				}
 
 				if(array_key_exists($sAnchor, $this->oForm->aORenderlets)) {
@@ -191,8 +191,8 @@ class tx_rdtlink extends formidable_mainrenderlet {
 		return TRUE;
 	}
 
-	function _getAddInputParamsArray() {
-		$aAddParams = parent::_getAddInputParamsArray();
+	function _getAddInputParamsArray($aAdditional = array()) {
+		$aAddParams = parent::_getAddInputParamsArray($aAdditional);
 		if(($sTarget = $this->_navConf("/target")) !== FALSE) {
 			$aAddParams[] = " target=\"" . $sTarget . "\" ";
 		}

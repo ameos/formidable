@@ -2,7 +2,7 @@
 	
 	if (!defined ("TYPO3_MODE")) 	die ("Access denied.");
 	
-	#define("PATH_formidable", t3lib_extMgm::extPath("ameos_formidable"));
+	#define("PATH_formidable", TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath("ameos_formidable"));
 	#define("PATH_formidableapi", PATH_formidable . "api/class.tx_ameosformidable.php");
 	
 	if(file_exists(PATH_site . "typo3conf/ext/ameos_formidable") && is_dir(PATH_site . "typo3conf/ext/ameos_formidable")) {
@@ -11,9 +11,9 @@
 	
 	define("PATH_formidableapi", PATH_formidable . "api/class.tx_ameosformidable.php");
 
-	// define XCLASS to t3lib_tsparser
-	$TYPO3_CONF_VARS['FE']['XCLASS']['t3lib/class.t3lib_tsparser.php'] = PATH_formidable . "res/xclass/class.ux_t3lib_tsparser.php";
-	$TYPO3_CONF_VARS['BE']['XCLASS']['t3lib/class.t3lib_tsparser.php'] = PATH_formidable . "res/xclass/class.ux_t3lib_tsparser.php";
+	// define XCLASS to TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser
+	$TYPO3_CONF_VARS['FE']['XCLASS']['t3lib/class.t3lib_TSparser.php'] = PATH_formidable . "res/xclass/class.ux_t3lib_TSparser.php";
+	$TYPO3_CONF_VARS['BE']['XCLASS']['t3lib/class.t3lib_TSparser.php'] = PATH_formidable . "res/xclass/class.ux_t3lib_TSparser.php";
 
 	// defines the Formidable ajax content-engine ID
 	$TYPO3_CONF_VARS['FE']['eID_include']['tx_ameosformidable'] = 'EXT:ameos_formidable/remote/formidableajax.php';
@@ -34,10 +34,10 @@
 	);
 
 	// defines the generic CACHED rendering plugin 
-	t3lib_extMgm::addPItoST43($_EXTKEY,'pi1/class.tx_ameosformidable_pi1.php','_pi1','list_type',1);
+	TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPItoST43($_EXTKEY,'pi1/class.tx_ameosformidable_pi1.php','_pi1','list_type',1);
 
 	// defines the generic NOT CACHED rendering plugin 
-	t3lib_extMgm::addPItoST43($_EXTKEY,'pi2/class.tx_ameosformidable_pi2.php','_pi2','list_type',0);
+	TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPItoST43($_EXTKEY,'pi2/class.tx_ameosformidable_pi2.php','_pi2','list_type',0);
 	
 	if (!defined('PATH_tslib')) {
 		if (@is_dir(PATH_site.TYPO3_mainDir.'sysext/cms/tslib/')) {
