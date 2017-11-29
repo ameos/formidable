@@ -29,6 +29,7 @@ Formidable.Classes.PlUpload = Formidable.inherit({
 		this.oUploader.destroy();
 	},
 	plUploadObjectInit: function() {
+		console.log(this.config);
 		var oUploaderConfig = {
 			runtimes: this.config.runtimes,
 			browse_button: this.config.browse_button,
@@ -216,7 +217,8 @@ Formidable.Classes.PlUpload = Formidable.inherit({
 	},
 	onError_defaultAction: function(up, err) {
 		sQueueId = this.config.files_queue;
-
+		console.log(err.code);
+		console.log(err.message);
 		$('#' + Formidable.escapeSelectorId(sQueueId)).append("<div>Error: " + err.code +
 			", Message: " + err.message +
 			(err.file ? ", File: " + err.file.name : "") +

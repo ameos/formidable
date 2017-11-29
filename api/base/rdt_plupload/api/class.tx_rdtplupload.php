@@ -65,11 +65,11 @@ class tx_rdtplupload extends formidable_mainrenderlet {
 		$sHiddenValue = trim(str_replace('\\', '', $this->getJsonValue()), '"');
 		
 		$sInputHidden = '<input type="hidden" name="' . $sValuesName . '" id="' . $sValuesId . '" value=\'' . $sHiddenValue . '\'>';
-		$sBrowseLink = '<a id="' . $sBrowseId . '" href="javascript:void(0);" style="width:32px;height:32px;">' . $this->getBrowseLabel() . '</a>';
+		$sBrowseLink = '<a id="' . $sBrowseId . '" href="javascript:void(0);" title="'.$this->oForm->getLLLabel("LLL:EXT:ameos_formidable/api/base/rdt_plupload/res/locallang.xml:browselabel").'">' . $this->getBrowseLabel() . '</a>';
 		$sInput = $sInputHidden . $sBrowseLink;
 		
 		if($this->hasDefaultBehaviour()) {
-			$sInput .= '&nbsp;<a id="' . $sUploadId . '" href="#">' . $this->getUploadLabel() . '</a><div id="' . $sQueueId . '"></div>';
+			$sInput .= '&nbsp;<a id="' . $sUploadId . '" href="#" title="'.$this->oForm->getLLLabel("LLL:EXT:ameos_formidable/api/base/rdt_plupload/res/locallang.xml:uploadlabel").'">' . $this->getUploadLabel() . '</a><div id="' . $sQueueId . '"></div>';
 		}
 
 		$sAddParams = $this->_getAddInputParams();
@@ -145,7 +145,7 @@ class tx_rdtplupload extends formidable_mainrenderlet {
 	function includeScripts($aConf = array()) {
 		parent::includeScripts($aConf);
 		
-		$sAbsName = $this->getAbsName();
+		$sAbsName = $this->_getElementHtmlId();
 		$sInitScript =<<<INITSCRIPT
 
 		try {
@@ -220,7 +220,7 @@ INITSCRIPT;
 		$aSizes = array(
 			"iPhpFileMax"	=> intval(ini_get("upload_max_filesize")),
 			"iPhpPostMax"	=> intval(ini_get("post_max_size")),
-			"iT3FileMax"	=> intval($GLOBALS['TYPO3_CONF_VARS']['BE']['maxFileSize']),
+			//"iT3FileMax"	=> intval($GLOBALS['TYPO3_CONF_VARS']['BE']['maxFileSize']),
 		);
 
 		if(($mFileSize = $this->_navConf("maxsize")) !== FALSE) {
@@ -235,7 +235,7 @@ INITSCRIPT;
 		}
 
 		asort($aSizes);
-		return array_shift($aSizes);
+		return array_shift($aSizes)*1024*1024;
 	}
 	
 	function getRuntimes() {
@@ -267,11 +267,11 @@ INITSCRIPT;
 		return $this->oForm->array2json($aInfo);
 	}
 	
-	function handleAjaxRequest($oRequest) {
+	function handleAjaxRequest(&$oRequest) {
 		
 		$bRenamed = FALSE;
 		
-		$oFile = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("t3lib_basicFileFunctions");
+		$oFile = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("TYPO3\\CMS\\Core\\Utility\\File\\BasicFileUtility");
 		
 		// 5 minutes execution time
 		@set_time_limit(5 * 60);
