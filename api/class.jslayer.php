@@ -123,6 +123,7 @@
 		}
 
 		function minified() {
+			return false;
 			return (
 				tx_ameosformidable::__getEnvExecMode() !== "BE" && 
 				intval($this->oForm->conf["minify."]["enabled"]) === 1 &&
@@ -138,6 +139,7 @@
 		}
 
 		function gziped() {
+			return false;
 			return (
 				$this->minified() &&
 				intval($this->oForm->conf["minify."]["gzip"]) === 1 &&

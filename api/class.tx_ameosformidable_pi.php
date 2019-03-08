@@ -1,6 +1,4 @@
 <?php
-	
-	require_once(PATH_tslib.'class.\TYPO3\CMS\Frontend\Plugin\AbstractPlugin.php');
 
 	class tx_ameosformidable_pi extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 		
@@ -20,6 +18,7 @@
 			));
 
 			require_once(PATH_formidableapi);
+			$this->oForm = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("tx_ameosformidable");
 
 			if($sConfPath !== "") {
 
@@ -44,10 +43,10 @@
 				));
 
 				if($sConfPath !== "") {
-					$this->sXmlPath = tx_ameosformidable::toServerPath($sConfPath);
+					$this->sXmlPath = $this->oForm->toServerPath($sConfPath);
 				} else {
 					if(array_key_exists("xmlpath", $this->conf)) {
-						$this->sXmlPath = tx_ameosformidable::toServerPath($this->conf["xmlpath"]);
+						$this->sXmlPath = $this->oForm->toServerPath($this->conf["xmlpath"]);
 					} else {
 						return "<strong>Formidable: TS or XML pathes not defined</strong>";
 					}
@@ -58,10 +57,7 @@
 		}
 
 		function render() {
-			// init+render
-
-			require_once(PATH_formidable . "api/class.tx_ameosformidable.php");
-			$this->oForm = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance("tx_ameosformidable");
+			
 			if($this->sXmlPath === FALSE) {
 				$this->oForm->initFromTs(
 					$this,
