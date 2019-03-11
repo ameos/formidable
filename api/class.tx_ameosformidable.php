@@ -8455,7 +8455,7 @@ MAYDAYPAGE;
 			// ajax context
 			// getting form in session
 			if(array_key_exists($sFormId, $GLOBALS["_SESSION"]["ameos_formidable"]["hibernate"])) {
-				return tx_ameosformidable::unHibernate(
+				return $this->unHibernate(
 					$GLOBALS["_SESSION"]["ameos_formidable"]["hibernate"][$this->_getSessionDataHashKey()]
 				);
 			} else {
@@ -8473,8 +8473,6 @@ MAYDAYPAGE;
 	 * @return	[type]		...
 	 */
 	static function &unHibernate(&$aHibernation) {
-		tx_ameosformidable::loadRunningObjects($aHibernation);
-		tx_ameosformidable::loadParent($aHibernation);
 
 		if($aHibernation["be_user"] !== FALSE) {
 			$GLOBALS["BE_USER"] = unserialize($aHibernation["be_user"]);
@@ -8483,6 +8481,8 @@ MAYDAYPAGE;
 		$GLOBALS["T3_VAR"] = unserialize($aHibernation["t3_var"]);
 
 		$oForm = unserialize($aHibernation["object"]);
+		$oForm->loadRunningObjects($aHibernation);
+		$oForm->loadParent($aHibernation);
 		$oForm->cObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
 		$oForm->conf =& $GLOBALS["_SESSION"]["ameos_formidable"]["tsconf"];
 
@@ -8503,11 +8503,11 @@ MAYDAYPAGE;
 	 * @param	[type]		$$aHibernation: ...
 	 * @return	[type]		...
 	 */
-	static function loadRunningObjects(&$aHibernation) {
+	function loadRunningObjects(&$aHibernation) {
 		$aRObjects =& $aHibernation["runningobjects"];
 		reset($aRObjects);
 		while(list(, $aObject) = each($aRObjects)) {
-			tx_ameosformidable::_loadObject(
+			$this->_loadObject(
 				$aObject["internalkey"],
 				$aObject["objecttype"]
 			);
@@ -8520,7 +8520,7 @@ MAYDAYPAGE;
 	 * @param	[type]		$$aHibernation: ...
 	 * @return	[type]		...
 	 */
-	static function loadParent(&$aHibernation) {
+	function loadParent(&$aHibernation) {
 		if($aHibernation["parent"] !== FALSE) {
 			$sClassPath = $aHibernation["parent"]["classpath"];
 			require_once($sClassPath);
