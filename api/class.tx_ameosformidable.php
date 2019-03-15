@@ -3082,7 +3082,7 @@ SANDBOXCLASS;
 	 * @param	string		$sObjectType: type of the object; something like renderlets, datahandlers, ...
 	 * @return	object		Built object or FALSE if failed
 	 */
-	static function _loadObject($sInternalKey, $sObjectType) {
+	function _loadObject($sInternalKey, $sObjectType) {
 
 		global $TYPO3_CONF_VARS;	// needed to allow XCLASS on renderlets
 										// http://bugs.typo3.org/view.php?id=9812
